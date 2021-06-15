@@ -1,8 +1,8 @@
 import React from 'react';
 import {View} from 'react-native';
 
-function MyScreen() {
+function OnBoadingScreen() {
   return <View />;
 }
 
-export default MyScreen;
+export default OnBoadingScreen;

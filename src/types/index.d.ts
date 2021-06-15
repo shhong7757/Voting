@@ -6,10 +6,15 @@ type MainStackParamList = {
 
 type MyStackParamList = {
   Accounts: undefined;
-  My: undefined;
+  Account: undefined;
 };
 
 type TabParamsList = {
   Main: undefined;
   My: undefined;
+};
+
+type Account = {
+  id: number;
+  name: string;
 };

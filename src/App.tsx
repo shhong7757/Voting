@@ -1,15 +1,23 @@
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Provider} from 'react-redux';
-import HomeScreen from './screens/Home';
+import {createStackNavigator} from '@react-navigation/stack';
+import {NavigationContainer} from '@react-navigation/native';
+import {Provider, useDispatch, useSelector} from 'react-redux';
+import {RESTORE_ACCOUNT} from './actions';
+import {STORAGE_KEY} from './constant';
+import AccountScreen from './screens/Account';
+import AccountsScreen from './screens/Accounts';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import CreateScreen from './screens/Create';
 import DetailScreen from './screens/Detail';
-import MyScreen from './screens/My';
-import store from './store';
-import AccountsScreen from './screens/Accounts';
+import HomeScreen from './screens/Home';
+import SplashScreen from './screens/Splash';
+import OnBoadingScreen from './screens/OnBoading';
+import store, {AppDispatch} from './store';
+import {RootState} from './reducers';
+import {Alert} from 'react-native';
 
+const AuthFlowStack = createStackNavigator();
 const MainStack = createStackNavigator<MainStackParamList>();
 const MyStack = createStackNavigator<MyStackParamList>();
 const Tab = createBottomTabNavigator<TabParamsList>();
@@ -27,9 +35,68 @@ const MainStacNavigator = () => {
 const MyStackNavigator = () => {
   return (
     <MyStack.Navigator>
-      <MyStack.Screen name="My" component={MyScreen} />
+      <MyStack.Screen name="Account" component={AccountScreen} />
       <MyStack.Screen name="Accounts" component={AccountsScreen} />
     </MyStack.Navigator>
+  );
+};
+
+const TabNavigator = () => {
+  return (
+    <Tab.Navigator>
+      <Tab.Screen name="Main" component={MainStacNavigator} />
+      <Tab.Screen name="My" component={MyStackNavigator} />
+    </Tab.Navigator>
+  );
+};
+
+const AuthFlow = () => {
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState(undefined);
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  const account = useSelector((state: RootState) => state.auth.account);
+
+  React.useEffect(() => {
+    if (error) {
+      Alert.alert('저장된 데이터를 읽어오는데 실패했습니다');
+    }
+  }, [error]);
+
+  React.useCallback(async () => {
+    try {
+      const savedAccount = await AsyncStorage.getItem(STORAGE_KEY.ACCOUNT);
+
+      if (savedAccount) {
+        const parsedData = JSON.parse(savedAccount) as Account;
+        dispatch({type: RESTORE_ACCOUNT, payload: parsedData});
+      }
+
+      setLoading(false);
+    } catch (e) {
+      // read error
+      setError(e);
+      setLoading(false);
+    }
+  }, [dispatch]);
+
+  if (loading) {
+    return <SplashScreen />;
+  }
+
+  return (
+    <AuthFlowStack.Navigator headerMode="none">
+      {account !== undefined ? (
+        <>
+          <AuthFlowStack.Screen name="Root" component={TabNavigator} />
+        </>
+      ) : (
+        <>
+          <AuthFlowStack.Screen name="OnBoading" component={OnBoadingScreen} />
+        </>
+      )}
+    </AuthFlowStack.Navigator>
   );
 };
 
@@ -37,10 +104,7 @@ const App = () => {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Tab.Navigator>
-          <Tab.Screen name="Main" component={MainStacNavigator} />
-          <Tab.Screen name="My" component={MyStackNavigator} />
-        </Tab.Navigator>
+        <AuthFlow />
       </NavigationContainer>
     </Provider>
   );
