@@ -2,7 +2,7 @@ import React from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import {StackScreenProps} from '@react-navigation/stack';
 
-interface Props extends StackScreenProps<RootStack, 'Home'> {}
+interface Props extends StackScreenProps<MainStackParamList, 'Home'> {}
 
 function HomeScreen({navigation}: Props) {
   const handlePressCreate = React.useCallback(() => {
