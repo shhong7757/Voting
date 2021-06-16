@@ -1,4 +1,4 @@
-import React, {ReactChild} from 'react';
+import React from 'react';
 import {
   Dimensions,
   Modal,
@@ -11,8 +11,14 @@ import {
 } from 'react-native';
 
 interface Props {
-  render: ReactChild;
-  children(props: {show: () => void}): JSX.Element;
+  render(props: {
+    show: () => void;
+    hide: (callback?: () => void) => void;
+  }): JSX.Element;
+  children(props: {
+    show: () => void;
+    hide: (callback?: () => void) => void;
+  }): JSX.Element;
 }
 
 const screen = Dimensions.get('screen');
@@ -32,19 +38,32 @@ function WithBottomSheet({children, render}: Props) {
     outputRange: [heightOfHalfScreen, 0],
   });
 
-  React.useEffect(() => {
+  const show = React.useCallback(() => {
+    setVisible(true);
+
     Animated.timing(fadeAnim, {
-      toValue: visible ? 1 : 0,
+      toValue: 1,
       duration,
       useNativeDriver: false,
     }).start();
-  }, [fadeAnim, visible]);
+  }, [fadeAnim]);
 
-  const show = React.useCallback(() => {
-    setVisible(true);
-  }, []);
+  const hide = React.useCallback(
+    (callback?: () => void) => {
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration,
+        useNativeDriver: false,
+      }).start(() => {
+        setVisible(false);
 
-  const hide = React.useCallback(() => setVisible(false), []);
+        if (callback) {
+          callback();
+        }
+      });
+    },
+    [fadeAnim],
+  );
 
   const {bh, f1, headerTitle, headerWrapper, renderContainer} = styles;
 
@@ -52,7 +71,7 @@ function WithBottomSheet({children, render}: Props) {
     <>
       <Modal transparent visible={visible} onRequestClose={hide}>
         <Animated.View style={[f1, {backgroundColor: fadeBackgroundColor}]}>
-          <Pressable style={f1} onPress={hide} />
+          <Pressable style={f1} onPress={() => hide()} />
           <Animated.View
             style={[
               renderContainer,
@@ -65,16 +84,18 @@ function WithBottomSheet({children, render}: Props) {
                     아래 유저 중 하나를 선택해주세요
                   </Text>
                 </View>
-                <Pressable onPress={hide}>
+                <Pressable onPress={() => hide()}>
                   <Text>취소</Text>
                 </Pressable>
               </View>
-              <View style={{height: heightOfHalfScreen}}>{render}</View>
+              <View style={{height: heightOfHalfScreen}}>
+                {render({show, hide})}
+              </View>
             </SafeAreaView>
           </Animated.View>
         </Animated.View>
       </Modal>
-      <View>{children({show})}</View>
+      <View>{children({show, hide})}</View>
     </>
   );
 }

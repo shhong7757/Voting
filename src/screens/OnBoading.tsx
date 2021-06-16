@@ -21,9 +21,16 @@ function OnBoadingScreen() {
   const dispatch = useDispatch<AppDispatch>();
 
   const handlePressAccount = React.useCallback(
-    async (account: Account) => {
-      await AsyncStorage.setItem(STORAGE_KEY.ACCOUNT, JSON.stringify(account));
-      dispatch({type: 'SELECT_ACCOUNT', payload: account});
+    (account: Account) => {
+      async function login() {
+        await AsyncStorage.setItem(
+          STORAGE_KEY.ACCOUNT,
+          JSON.stringify(account),
+        );
+        dispatch({type: 'SELECT_ACCOUNT', payload: account});
+      }
+
+      login();
     },
     [dispatch],
   );
@@ -32,19 +39,19 @@ function OnBoadingScreen() {
 
   return (
     <WithBottomSheet
-      render={
+      render={({hide}) => (
         <FlatList
           style={accountListWrapper}
           data={accountData}
           renderItem={({item}) => (
             <Pressable
               style={accountWrapper}
-              onPress={() => handlePressAccount(item)}>
+              onPress={() => hide(() => handlePressAccount(item))}>
               <AccountProfile account={item} />
             </Pressable>
           )}
         />
-      }>
+      )}>
       {({show}) => (
         <SafeAreaView style={container}>
           <View>
