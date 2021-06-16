@@ -6,7 +6,7 @@ import {Provider, useDispatch, useSelector} from 'react-redux';
 import {RESTORE_ACCOUNT} from './actions';
 import {STORAGE_KEY} from './constant';
 import AccountScreen from './screens/Account';
-import AccountsScreen from './screens/Accounts';
+import SettingScreen from './screens/Setting';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CreateScreen from './screens/Create';
 import DetailScreen from './screens/Detail';
@@ -36,7 +36,6 @@ const MyStackNavigator = () => {
   return (
     <MyStack.Navigator>
       <MyStack.Screen name="Account" component={AccountScreen} />
-      <MyStack.Screen name="Accounts" component={AccountsScreen} />
     </MyStack.Navigator>
   );
 };
@@ -90,10 +89,19 @@ const AuthFlow = () => {
   }
 
   return (
-    <AuthFlowStack.Navigator headerMode="none">
+    <AuthFlowStack.Navigator>
       {account !== undefined ? (
         <>
-          <AuthFlowStack.Screen name="Root" component={TabNavigator} />
+          <AuthFlowStack.Screen
+            name="Root"
+            component={TabNavigator}
+            options={{headerShown: false}}
+          />
+          <AuthFlowStack.Screen
+            name="Setting"
+            component={SettingScreen}
+            options={{headerShown: true}}
+          />
         </>
       ) : (
         <>

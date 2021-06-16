@@ -8,7 +8,7 @@ type MainStackParamList = {
 };
 
 type MyStackParamList = {
-  Accounts: undefined;
+  Setting: undefined;
   Account: undefined;
 };
 
