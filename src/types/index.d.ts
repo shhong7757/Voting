@@ -1,3 +1,6 @@
+declare module '*.jpg';
+declare module '*.json';
+
 type MainStackParamList = {
   Home: undefined;
   Create: undefined;

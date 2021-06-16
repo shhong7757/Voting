@@ -51,7 +51,7 @@ const TabNavigator = () => {
 };
 
 const AuthFlow = () => {
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(undefined);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -64,21 +64,25 @@ const AuthFlow = () => {
     }
   }, [error]);
 
-  React.useCallback(async () => {
-    try {
-      const savedAccount = await AsyncStorage.getItem(STORAGE_KEY.ACCOUNT);
+  React.useEffect(() => {
+    async function load() {
+      try {
+        const savedAccount = await AsyncStorage.getItem(STORAGE_KEY.ACCOUNT);
 
-      if (savedAccount) {
-        const parsedData = JSON.parse(savedAccount) as Account;
-        dispatch({type: RESTORE_ACCOUNT, payload: parsedData});
+        if (savedAccount) {
+          const parsedData = JSON.parse(savedAccount) as Account;
+          dispatch({type: RESTORE_ACCOUNT, payload: parsedData});
+        }
+
+        setLoading(false);
+      } catch (e) {
+        // read error
+        setError(e);
+        setLoading(false);
       }
-
-      setLoading(false);
-    } catch (e) {
-      // read error
-      setError(e);
-      setLoading(false);
     }
+
+    load();
   }, [dispatch]);
 
   if (loading) {

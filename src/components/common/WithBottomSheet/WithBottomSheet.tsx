@@ -19,7 +19,7 @@ const screen = Dimensions.get('screen');
 const heightOfHalfScreen = screen.height / 2;
 const duration = 300;
 
-function AAA({children, render}: Props) {
+function WithBottomSheet({children, render}: Props) {
   const [visible, setVisible] = React.useState(false);
 
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
@@ -46,22 +46,29 @@ function AAA({children, render}: Props) {
 
   const hide = React.useCallback(() => setVisible(false), []);
 
-  const {bh, f1, renderContainer} = styles;
+  const {bh, f1, headerTitle, headerWrapper, renderContainer} = styles;
 
   return (
     <>
       <Modal transparent visible={visible} onRequestClose={hide}>
         <Animated.View style={[f1, {backgroundColor: fadeBackgroundColor}]}>
-          <View style={f1} />
+          <Pressable style={f1} onPress={hide} />
           <Animated.View
             style={[
               renderContainer,
               {transform: [{translateY: fadeTranslateY}]},
             ]}>
             <SafeAreaView style={bh}>
-              <Pressable onPress={hide}>
-                <Text>종료</Text>
-              </Pressable>
+              <View style={headerWrapper}>
+                <View style={f1}>
+                  <Text style={headerTitle}>
+                    아래 유저 중 하나를 선택해주세요
+                  </Text>
+                </View>
+                <Pressable onPress={hide}>
+                  <Text>취소</Text>
+                </Pressable>
+              </View>
               <View style={{height: heightOfHalfScreen}}>{render}</View>
             </SafeAreaView>
           </Animated.View>
@@ -76,6 +83,15 @@ const styles = StyleSheet.create({
   bh: {backgroundColor: 'white'},
   bg: {backgroundColor: 'gray'},
   f1: {flex: 1},
+  headerWrapper: {
+    flexDirection: 'row',
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontWeight: 'bold',
+  },
   renderContainer: {
     backgroundColor: 'white',
     borderTopLeftRadius: 10,
@@ -83,4 +99,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AAA;
+export default WithBottomSheet;
