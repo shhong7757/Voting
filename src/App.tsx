@@ -18,6 +18,7 @@ import {RootState} from './reducers';
 import {Alert} from 'react-native';
 import FormHeaderRight from './components/form/FormHeaderRight';
 import {navigationRef} from './lib/rootNavigation';
+import FormHeaderLeft from './components/form/FormHeaderLeft';
 
 const AuthFlowStack = createStackNavigator();
 const MainStack = createStackNavigator<MainStackParamList>();
@@ -31,7 +32,11 @@ const MainStacNavigator = () => {
       <MainStack.Screen
         name="Create"
         component={CreateScreen}
-        options={{headerRight: () => <FormHeaderRight />}}
+        options={{
+          headerRight: () => <FormHeaderRight />,
+          headerLeft: () => <FormHeaderLeft />,
+          gestureEnabled: false,
+        }}
       />
       <MainStack.Screen name="Detail" component={DetailScreen} />
     </MainStack.Navigator>
