@@ -16,6 +16,9 @@ import OnBoadingScreen from './screens/OnBoading';
 import store, {AppDispatch} from './store';
 import {RootState} from './reducers';
 import {Alert} from 'react-native';
+import FormHeaderRight from './components/form/FormHeaderRight';
+import {navigationRef} from './lib/rootNavigation';
+import FormHeaderLeft from './components/form/FormHeaderLeft';
 
 const AuthFlowStack = createStackNavigator();
 const MainStack = createStackNavigator<MainStackParamList>();
@@ -26,7 +29,15 @@ const MainStacNavigator = () => {
   return (
     <MainStack.Navigator initialRouteName="Home">
       <MainStack.Screen name="Home" component={HomeScreen} />
-      <MainStack.Screen name="Create" component={CreateScreen} />
+      <MainStack.Screen
+        name="Create"
+        component={CreateScreen}
+        options={{
+          headerRight: () => <FormHeaderRight />,
+          headerLeft: () => <FormHeaderLeft />,
+          gestureEnabled: false,
+        }}
+      />
       <MainStack.Screen name="Detail" component={DetailScreen} />
     </MainStack.Navigator>
   );
@@ -115,7 +126,7 @@ const AuthFlow = () => {
 const App = () => {
   return (
     <Provider store={store}>
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         <AuthFlow />
       </NavigationContainer>
     </Provider>
