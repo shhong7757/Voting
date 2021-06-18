@@ -11,6 +11,7 @@ import {
   SET_FORM_VOTE_LIST,
   INIT_FORM,
   SET_SUBMIT_LOADING,
+  SET_FORM_VALIDATION_ERROR,
 } from '../actions';
 
 export type Auth = {account?: Account};
@@ -33,21 +34,27 @@ export type Form = {
   deadline: Date;
   list: Array<string>;
   loading: boolean;
+  validationError: Array<keyof Omit<Form, 'loading' | 'validationError'>>;
 };
+
 const dayOffset = 3;
 const limitOfList = 3;
-const formInitState = {
-  title: '',
+const formInitState: Form = {
   deadline: dayjs().add(dayOffset, 'd').minute(0).toDate(),
   list: new Array<string>(limitOfList).fill(''),
   loading: false,
+  title: '',
+  validationError: [],
 };
+
 function form(state = formInitState, action: FormActionTypes) {
   switch (action.type) {
     case INIT_FORM:
       return formInitState;
     case SET_FORM_DEADLINE:
       return {...state, deadline: action.payload};
+    case SET_FORM_VALIDATION_ERROR:
+      return {...state, validationError: action.payload};
     case SET_FORM_TITLE:
       return {...state, title: action.payload};
     case SET_FORM_VOTE_LIST:

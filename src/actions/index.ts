@@ -24,9 +24,10 @@ export type AccountActionTypes =
 export const INIT_FORM = 'INIT_FORM' as const;
 export const SET_FORM_DEADLINE = 'SET_FORM_DEADLINE' as const;
 export const SET_FORM_TITLE = 'SET_FORM_TITLE' as const;
+export const SET_FORM_VALIDATION_ERROR = 'SET_FORM_VALIDATION_ERROR' as const;
 export const SET_FORM_VOTE_LIST = 'SET_FORM_VOTE_LIST' as const;
-export const SUBMIT_FORM = 'SUBMIT_FORM' as const;
 export const SET_SUBMIT_LOADING = 'SET_SUBMIT_LOADING' as const;
+export const SUBMIT_FORM = 'SUBMIT_FORM' as const;
 
 export const initForm = () => ({type: INIT_FORM});
 
@@ -38,6 +39,11 @@ export const setFormDeadLine = (date: Date) => ({
 export const setFormTitle = (title: string) => ({
   type: SET_FORM_TITLE,
   payload: title,
+});
+
+export const setFormValidationError = (validationError: Array<string>) => ({
+  type: SET_FORM_VALIDATION_ERROR,
+  payload: validationError,
 });
 
 export const setFormVoteList = (list: Array<string>) => ({
@@ -56,6 +62,7 @@ export type FormActionTypes =
   | ReturnType<typeof initForm>
   | ReturnType<typeof setFormDeadLine>
   | ReturnType<typeof setFormTitle>
+  | ReturnType<typeof setFormValidationError>
   | ReturnType<typeof setFormVoteList>
   | ReturnType<typeof submitForm>
   | ReturnType<typeof setSubmitLoading>;

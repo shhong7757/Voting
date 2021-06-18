@@ -19,9 +19,10 @@ import {
   SET_FORM_TITLE,
   SET_FORM_VOTE_LIST,
 } from '../actions';
+import WithValidateError from '../components/form/WithValidateError';
 
 function CreateScreen() {
-  const {deadline, list, title, loading} = useSelector(
+  const {deadline, list, title, loading, validationError} = useSelector(
     (state: RootState) => state.form,
   );
 
@@ -68,35 +69,41 @@ function CreateScreen() {
       <LoadingOverlay visible={loading} />
       <ScrollView bounces={false}>
         <View style={rowWrapper}>
-          <TextInput
-            placeholder="투표 제목"
-            value={title}
-            onChangeText={handleChangeTitle}
-          />
+          <WithValidateError errors={validationError} property="title">
+            <TextInput
+              placeholder="투표 제목"
+              value={title}
+              onChangeText={handleChangeTitle}
+            />
+          </WithValidateError>
         </View>
         <View style={rowWrapper}>
-          <View style={fldr}>
-            <View style={fl1}>
-              <Text>마감시간 설정</Text>
+          <WithValidateError errors={validationError} property="deadline">
+            <View style={fldr}>
+              <View style={fl1}>
+                <Text>마감시간 설정</Text>
+              </View>
+              <Pressable onPress={handlePressEditDate}>
+                <Text>{showDatePicker ? '완료' : '수정'}</Text>
+              </Pressable>
             </View>
-            <Pressable onPress={handlePressEditDate}>
-              <Text>{showDatePicker ? '완료' : '수정'}</Text>
-            </Pressable>
-          </View>
-          <Text>{dayjs(deadline).format('llll')}</Text>
-          <View style={datePickerWrapper}>
-            {showDatePicker && (
-              <DatePicker
-                date={deadline}
-                onDateChange={handleChangeDate}
-                locale="ko"
-                minimumDate={new Date()}
-              />
-            )}
-          </View>
+            <Text>{dayjs(deadline).format('llll')}</Text>
+            <View style={datePickerWrapper}>
+              {showDatePicker && (
+                <DatePicker
+                  date={deadline}
+                  onDateChange={handleChangeDate}
+                  locale="ko"
+                  minimumDate={new Date()}
+                />
+              )}
+            </View>
+          </WithValidateError>
         </View>
         <View style={rowWrapper}>
-          <FormInputList list={list} onChangeList={handleChangeList} />
+          <WithValidateError errors={validationError} property="list">
+            <FormInputList list={list} onChangeList={handleChangeList} />
+          </WithValidateError>
         </View>
       </ScrollView>
     </>
@@ -104,7 +111,12 @@ function CreateScreen() {
 }
 
 const styles = StyleSheet.create({
-  rowWrapper: {paddingHorizontal: 16, paddingVertical: 8},
+  rowWrapper: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: 'white',
+    marginBottom: 8,
+  },
   datePickerWrapper: {alignItems: 'center'},
   fl1: {flex: 1},
   fldr: {flexDirection: 'row'},
