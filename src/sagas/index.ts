@@ -49,6 +49,8 @@ function* submitForm() {
     yield put({type: INIT_FORM});
 
     yield call(navigation.goBack);
+
+    yield put({type: GET_LIST_REQUEST});
   } catch (e) {
     if (e instanceof FormValidationError) {
       yield put({type: SET_FORM_VALIDATION_ERROR, payload: e.properties});
