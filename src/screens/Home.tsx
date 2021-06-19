@@ -1,6 +1,10 @@
 import React from 'react';
 import {AppDispatch} from '../store';
+<<<<<<< HEAD
 import {GET_LIST_REFRESHING, GET_LIST_REQUEST} from '../actions';
+=======
+import {GET_LIST_REQUEST} from '../actions';
+>>>>>>> ff93abb439275ce04b7faa58648bfda379fc682c
 import {getHome} from '../reducers/selectors';
 import {StackScreenProps} from '@react-navigation/stack';
 import {FlatList} from 'react-native';
@@ -30,7 +34,11 @@ function HomeScreen({navigation}: Props) {
   }, [navigation]);
 
   const handlePressRetry = React.useCallback(() => {
+<<<<<<< HEAD
     dispatch({type: GET_LIST_REFRESHING});
+=======
+    dispatch({type: GET_LIST_REQUEST});
+>>>>>>> ff93abb439275ce04b7faa58648bfda379fc682c
   }, [dispatch]);
 
   if (list.loading && list.data === undefined) {
@@ -48,9 +56,12 @@ function HomeScreen({navigation}: Props) {
         renderItem={({item}) => (
           <VoteListItem item={item} onPressItem={handlePressListItem} />
         )}
+<<<<<<< HEAD
         keyExtractor={item => item.id}
         refreshing={list.refreshing}
         onRefresh={handlePressRetry}
+=======
+>>>>>>> ff93abb439275ce04b7faa58648bfda379fc682c
       />
     );
   }
