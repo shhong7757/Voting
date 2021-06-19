@@ -90,7 +90,6 @@ function* watchSubmitForm() {
 
 function* watchGetList() {
   while (true) {
-<<<<<<< HEAD
     const action: {type: string} = yield take([
       GET_LIST_REQUEST,
       GET_LIST_REFRESHING,
@@ -105,10 +104,6 @@ function* watchGetList() {
       yield take([GET_LIST_SUCCESS, GET_LIST_FAILURE]);
       yield put({type: SET_LIST_REFRESHING, payload: false});
     }
-=======
-    yield take(GET_LIST_REQUEST);
-    yield fork(getList);
->>>>>>> ff93abb439275ce04b7faa58648bfda379fc682c
   }
 }
 
