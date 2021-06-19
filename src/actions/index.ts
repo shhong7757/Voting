@@ -70,9 +70,13 @@ export type FormActionTypes =
   | ReturnType<typeof setSubmitLoading>;
 
 //
+export const GET_LIST_REFRESHING = 'GET_LIST_REFRESHING' as const;
 export const GET_LIST_REQUEST = 'GET_LIST_REQUEST' as const;
 export const GET_LIST_SUCCESS = 'GET_LIST_SUCCESS' as const;
 export const GET_LIST_FAILURE = 'GET_LIST_FAILURE' as const;
+export const SET_LIST_REFRESHING = 'SET_LIST_REFRESHING' as const;
+
+export const getListRefreshing = () => ({type: GET_LIST_REFRESHING});
 
 export const getListRequest = () => ({type: GET_LIST_REQUEST});
 
@@ -84,6 +88,11 @@ export const getListSuccess = (list: Array<Vote>) => ({
 export const getListFailure = (error: Error) => ({
   type: GET_LIST_FAILURE,
   payload: error,
+});
+
+export const setListRefreshing = (refreshing: boolean) => ({
+  type: SET_LIST_REFRESHING,
+  payload: refreshing,
 });
 
 export type GetVoteListRequestPayload = Omit<
@@ -106,6 +115,8 @@ export type GetVoetListResponseData = Merge<
 >;
 
 export type HomeActionTypes =
+  | ReturnType<typeof getListRefreshing>
   | ReturnType<typeof getListFailure>
   | ReturnType<typeof getListRequest>
-  | ReturnType<typeof getListSuccess>;
+  | ReturnType<typeof getListSuccess>
+  | ReturnType<typeof setListRefreshing>;

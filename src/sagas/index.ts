@@ -12,6 +12,8 @@ import {
   SET_FORM_VALIDATION_ERROR,
   SET_SUBMIT_LOADING,
   SUBMIT_FORM,
+  GET_LIST_REFRESHING,
+  SET_LIST_REFRESHING,
 } from '../actions';
 import * as navigation from '../lib/rootNavigation';
 import firestore, {
@@ -88,8 +90,20 @@ function* watchSubmitForm() {
 
 function* watchGetList() {
   while (true) {
-    yield take(GET_LIST_REQUEST);
+    const action: {type: string} = yield take([
+      GET_LIST_REQUEST,
+      GET_LIST_REFRESHING,
+    ]);
+    if (action.type === GET_LIST_REFRESHING) {
+      yield put({type: SET_LIST_REFRESHING, payload: true});
+    }
+
     yield fork(getList);
+
+    if (action.type === GET_LIST_REFRESHING) {
+      yield take([GET_LIST_SUCCESS, GET_LIST_FAILURE]);
+      yield put({type: SET_LIST_REFRESHING, payload: false});
+    }
   }
 }
 

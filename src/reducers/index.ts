@@ -16,6 +16,7 @@ import {
   GET_LIST_FAILURE,
   GET_LIST_REQUEST,
   GET_LIST_SUCCESS,
+  SET_LIST_REFRESHING,
 } from '../actions';
 
 export type Auth = {account?: Account};
@@ -71,11 +72,16 @@ function form(state = formInitState, action: FormActionTypes) {
 }
 
 export type Home = {
-  list: {loading: boolean; data?: Array<Vote>; error?: Error};
+  list: {
+    loading: boolean;
+    data?: Array<Vote>;
+    error?: Error;
+    refreshing: boolean;
+  };
 };
 
 const homeInitState: Home = {
-  list: {loading: false, data: undefined, error: undefined},
+  list: {loading: false, data: undefined, error: undefined, refreshing: false},
 };
 
 function home(state = homeInitState, action: HomeActionTypes) {
@@ -94,10 +100,16 @@ function home(state = homeInitState, action: HomeActionTypes) {
       return {
         ...state,
         list: {
+          ...state.list,
           loading: false,
           data: action.payload,
           error: undefined,
         },
+      };
+    case SET_LIST_REFRESHING:
+      return {
+        ...state,
+        list: {...state.list, refreshing: action.payload},
       };
     default:
       return state;
