@@ -2,19 +2,17 @@ import React from 'react';
 import {AppDispatch} from '../store';
 import {GET_LIST_REFRESHING, GET_LIST_REQUEST} from '../actions';
 import {getHome} from '../reducers/selectors';
-import {StackScreenProps} from '@react-navigation/stack';
 import {FlatList} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import VoteListItem from '../components/vote/VoteListItem';
 import VoteListEmpty from '../components/vote/VoteListEmpty';
 import LoadingScreen from '../components/common/LoadingScreen';
 import ErrorScreen from '../components/common/ErrorScreen';
+import {useNavigation} from '@react-navigation/native';
 
-interface Props extends StackScreenProps<MainStackParamList, 'Home'> {}
-
-function HomeScreen({navigation}: Props) {
+function HomeScreen() {
   const {list} = useSelector(getHome);
-
+  const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
 
   React.useEffect(() => {

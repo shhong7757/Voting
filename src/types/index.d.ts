@@ -5,7 +5,6 @@ type Merge<M, N> = Omit<M, Extract<keyof M, keyof N>> & N;
 
 type MainStackParamList = {
   Home: undefined;
-  Create: undefined;
   Detail: undefined;
 };
 
@@ -17,6 +16,7 @@ type MyStackParamList = {
 type TabParamsList = {
   Main: undefined;
   My: undefined;
+  CreateTmp: undefined;
 };
 
 type Account = {
