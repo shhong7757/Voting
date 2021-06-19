@@ -12,6 +12,10 @@ import {
   INIT_FORM,
   SET_SUBMIT_LOADING,
   SET_FORM_VALIDATION_ERROR,
+  HomeActionTypes,
+  GET_LIST_FAILURE,
+  GET_LIST_REQUEST,
+  GET_LIST_SUCCESS,
 } from '../actions';
 
 export type Auth = {account?: Account};
@@ -66,7 +70,42 @@ function form(state = formInitState, action: FormActionTypes) {
   }
 }
 
+export type Home = {
+  list: {loading: boolean; data?: Array<Vote>; error?: Error};
+};
+
+const homeInitState: Home = {
+  list: {loading: false, data: undefined, error: undefined},
+};
+
+function home(state = homeInitState, action: HomeActionTypes) {
+  switch (action.type) {
+    case GET_LIST_FAILURE:
+      return {
+        ...state,
+        list: {...state.list, loading: false, error: action.payload},
+      };
+    case GET_LIST_REQUEST:
+      return {
+        ...state,
+        list: {...state.list, loading: true},
+      };
+    case GET_LIST_SUCCESS:
+      return {
+        ...state,
+        list: {
+          loading: false,
+          data: action.payload,
+          error: undefined,
+        },
+      };
+    default:
+      return state;
+  }
+}
+
 export type RootState = {
+  home: Home;
   auth: Auth;
   form: Form;
 };
@@ -74,6 +113,7 @@ export type RootState = {
 const rootReducer = combineReducers({
   auth,
   form,
+  home,
 });
 
 export default rootReducer;

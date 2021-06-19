@@ -1,3 +1,5 @@
+import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
+
 //
 export const SELECT_ACCOUNT = 'SELECT_ACCOUNT' as const;
 export const RESTORE_ACCOUNT = 'RESTORE_ACCOUNT' as const;
@@ -66,3 +68,44 @@ export type FormActionTypes =
   | ReturnType<typeof setFormVoteList>
   | ReturnType<typeof submitForm>
   | ReturnType<typeof setSubmitLoading>;
+
+//
+export const GET_LIST_REQUEST = 'GET_LIST_REQUEST' as const;
+export const GET_LIST_SUCCESS = 'GET_LIST_SUCCESS' as const;
+export const GET_LIST_FAILURE = 'GET_LIST_FAILURE' as const;
+
+export const getListRequest = () => ({type: GET_LIST_REQUEST});
+
+export const getListSuccess = (list: Array<Vote>) => ({
+  type: GET_LIST_SUCCESS,
+  payload: list,
+});
+
+export const getListFailure = (error: Error) => ({
+  type: GET_LIST_FAILURE,
+  payload: error,
+});
+
+export type GetVoteListRequestPayload = Omit<
+  Merge<
+    Vote,
+    {
+      created_at: FirebaseFirestoreTypes.Timestamp;
+      deadline: FirebaseFirestoreTypes.Timestamp;
+    }
+  >,
+  'id'
+>;
+
+export type GetVoetListResponseData = Merge<
+  Vote,
+  {
+    created_at: FirebaseFirestoreTypes.Timestamp;
+    deadline: FirebaseFirestoreTypes.Timestamp;
+  }
+>;
+
+export type HomeActionTypes =
+  | ReturnType<typeof getListFailure>
+  | ReturnType<typeof getListRequest>
+  | ReturnType<typeof getListSuccess>;
