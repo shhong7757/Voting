@@ -70,6 +70,7 @@ function* getList() {
     const list = listSnapshot.docs.map(function (doc): Vote {
       return {
         ...doc.data(),
+        id: doc.id,
         deadline: doc.data().deadline.toDate(),
         created_at: doc.data().created_at.toDate(),
       };

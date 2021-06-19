@@ -12,7 +12,9 @@ import {useNavigation} from '@react-navigation/native';
 
 function HomeScreen() {
   const {list} = useSelector(getHome);
+
   const navigation = useNavigation();
+
   const dispatch = useDispatch<AppDispatch>();
 
   React.useEffect(() => {
