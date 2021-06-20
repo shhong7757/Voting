@@ -3,13 +3,23 @@ import {all, take, fork, select, call, put} from 'redux-saga/effects';
 import {Auth, Form} from '../reducers';
 import {getFormData, getAuth} from '../reducers/selectors';
 import {
+  GetVoteListRequestPayload,
+  GetVoetListResponseData,
+  GET_LIST_FAILURE,
+  GET_LIST_REQUEST,
+  GET_LIST_SUCCESS,
   INIT_FORM,
   SET_FORM_VALIDATION_ERROR,
   SET_SUBMIT_LOADING,
   SUBMIT_FORM,
+  GET_LIST_REFRESHING,
+  SET_LIST_REFRESHING,
 } from '../actions';
 import * as navigation from '../lib/rootNavigation';
-import firestore from '@react-native-firebase/firestore';
+import firestore, {
+  firebase,
+  FirebaseFirestoreTypes,
+} from '@react-native-firebase/firestore';
 import dayjs from 'dayjs';
 
 // worker
@@ -20,10 +30,13 @@ function* submitForm() {
 
     validateFormData(formData);
 
-    const data = {
-      account: auth.account,
-      created_at: dayjs().toDate(),
-      deadline: formData.deadline,
+    const data: GetVoteListRequestPayload & {
+      created_at: FirebaseFirestoreTypes.Timestamp;
+      deadline: FirebaseFirestoreTypes.Timestamp;
+    } = {
+      account: auth.account || {id: -1, name: 'undefined'},
+      created_at: firebase.firestore.Timestamp.fromDate(dayjs().toDate()),
+      deadline: firebase.firestore.Timestamp.fromDate(formData.deadline),
       list: formData.list,
       title: formData.title,
       voter: [],
@@ -38,11 +51,33 @@ function* submitForm() {
     yield put({type: INIT_FORM});
 
     yield call(navigation.goBack);
+
+    yield put({type: GET_LIST_REQUEST});
   } catch (e) {
     if (e instanceof FormValidationError) {
       yield put({type: SET_FORM_VALIDATION_ERROR, payload: e.properties});
     }
     yield put({type: SET_SUBMIT_LOADING, payload: false});
+  }
+}
+
+function* getList() {
+  try {
+    const listCollectionRef = firestore().collection('list');
+    const listSnapshot: FirebaseFirestoreTypes.QuerySnapshot<GetVoetListResponseData> =
+      yield call([listCollectionRef, listCollectionRef.get]);
+
+    const list = listSnapshot.docs.map(function (doc): Vote {
+      return {
+        ...doc.data(),
+        id: doc.id,
+        deadline: doc.data().deadline.toDate(),
+        created_at: doc.data().created_at.toDate(),
+      };
+    });
+    yield put({type: GET_LIST_SUCCESS, payload: list});
+  } catch (e) {
+    yield put({type: GET_LIST_FAILURE, payload: e});
   }
 }
 
@@ -54,6 +89,25 @@ function* watchSubmitForm() {
   }
 }
 
+function* watchGetList() {
+  while (true) {
+    const action: {type: string} = yield take([
+      GET_LIST_REQUEST,
+      GET_LIST_REFRESHING,
+    ]);
+    if (action.type === GET_LIST_REFRESHING) {
+      yield put({type: SET_LIST_REFRESHING, payload: true});
+    }
+
+    yield fork(getList);
+
+    if (action.type === GET_LIST_REFRESHING) {
+      yield take([GET_LIST_SUCCESS, GET_LIST_FAILURE]);
+      yield put({type: SET_LIST_REFRESHING, payload: false});
+    }
+  }
+}
+
 export default function* root() {
-  yield all([fork(watchSubmitForm)]);
+  yield all([fork(watchSubmitForm), fork(watchGetList)]);
 }

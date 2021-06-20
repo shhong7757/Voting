@@ -1,10 +1,26 @@
 import React from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
-import {StackScreenProps} from '@react-navigation/stack';
+import {AppDispatch} from '../store';
+import {GET_LIST_REFRESHING, GET_LIST_REQUEST} from '../actions';
+import {getHome} from '../reducers/selectors';
+import {FlatList} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
+import VoteListItem from '../components/vote/VoteListItem';
+import VoteListEmpty from '../components/vote/VoteListEmpty';
+import LoadingScreen from '../components/common/LoadingScreen';
+import ErrorScreen from '../components/common/ErrorScreen';
+import {useNavigation} from '@react-navigation/native';
 
-interface Props extends StackScreenProps<MainStackParamList, 'Home'> {}
+function HomeScreen() {
+  const {list} = useSelector(getHome);
 
-function HomeScreen({navigation}: Props) {
+  const navigation = useNavigation();
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  React.useEffect(() => {
+    dispatch({type: GET_LIST_REQUEST});
+  }, [dispatch]);
+
   const handlePressCreate = React.useCallback(() => {
     navigation.navigate('Create');
   }, [navigation]);
@@ -13,32 +29,31 @@ function HomeScreen({navigation}: Props) {
     navigation.navigate('Detail');
   }, [navigation]);
 
-  const {body, button} = styles;
+  const handlePressRetry = React.useCallback(() => {
+    dispatch({type: GET_LIST_REFRESHING});
+  }, [dispatch]);
 
-  return (
-    <View style={body}>
-      <Pressable style={button} onPress={handlePressCreate}>
-        <Text>Create</Text>
-      </Pressable>
-      <Pressable style={button} onPress={handlePressListItem}>
-        <Text>Item</Text>
-      </Pressable>
-    </View>
-  );
+  if (list.loading && list.data === undefined) {
+    return <LoadingScreen />;
+  } else if (list.error) {
+    return <ErrorScreen error={list.error} onPressRetry={handlePressRetry} />;
+  } else {
+    if (list.data && list.data.length === 0) {
+      return <VoteListEmpty onPressCreate={handlePressCreate} />;
+    }
+
+    return (
+      <FlatList
+        data={list.data || []}
+        renderItem={({item}) => (
+          <VoteListItem item={item} onPressItem={handlePressListItem} />
+        )}
+        keyExtractor={item => item.id}
+        refreshing={list.refreshing}
+        onRefresh={handlePressRetry}
+      />
+    );
+  }
 }
-
-const styles = StyleSheet.create({
-  body: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  button: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderWidth: 1,
-    borderColor: 'gray',
-  },
-});
 
 export default HomeScreen;
