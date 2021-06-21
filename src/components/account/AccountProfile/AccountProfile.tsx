@@ -1,31 +1,27 @@
 import React from 'react';
 import {Text, StyleSheet, Image, View} from 'react-native';
 
-import Image1 from '../../../assets/garden.jpg';
-import Image2 from '../../../assets/marguerite.jpg';
-import Image3 from '../../../assets/pink.jpg';
-import Image4 from '../../../assets/rose.jpg';
-import Image5 from '../../../assets/rose2.jpg';
+import {getAccountThumbnailSource} from '../../../lib/account';
 
 interface Props {
-  account: Account;
+  account?: Account;
 }
 
 function AccountProfile({account}: Props) {
   const {wrapper, image, text, textWrapper} = styles;
 
-  const url = React.useMemo(() => {
-    const arr = [Image1, Image2, Image3, Image4, Image5];
-    const idx = account.id % arr.length;
-
-    return arr[idx];
+  const [name, source] = React.useMemo(() => {
+    if (account) {
+      return [account.name, getAccountThumbnailSource(account.id)];
+    }
+    return ['undefined', getAccountThumbnailSource(-1)];
   }, [account]);
 
   return (
     <View style={wrapper}>
-      <Image style={image} source={url} />
+      <Image style={image} source={source} />
       <View style={textWrapper}>
-        <Text style={text}>{account.name}</Text>
+        <Text style={text}>{name}</Text>
       </View>
     </View>
   );
