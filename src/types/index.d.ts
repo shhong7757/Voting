@@ -5,7 +5,7 @@ type Merge<M, N> = Omit<M, Extract<keyof M, keyof N>> & N;
 
 type MainStackParamList = {
   Home: undefined;
-  Detail: undefined;
+  Detail: {id: string; title: string};
 };
 
 type MyStackParamList = {
@@ -32,4 +32,15 @@ type Vote = {
   list: Array<string>;
   title: string;
   voter: Array<Account>;
+};
+
+type Ballot = {
+  account: Account;
+  value: string;
+};
+
+type Ballots = {[accountId: string]: Ballot};
+
+type VoteDetail = {
+  vote: Vote;
 };

@@ -120,3 +120,55 @@ export type HomeActionTypes =
   | ReturnType<typeof getListRequest>
   | ReturnType<typeof getListSuccess>
   | ReturnType<typeof setListRefreshing>;
+
+//
+export const GET_DETAIL_REQUEST = 'GET_DETAIL_REQUEST' as const;
+export const GET_DETAIL_SUCCESS = 'GET_DETAIL_SUCCESS' as const;
+export const GET_DETAIL_FAILURE = 'GET_DETAIL_FAILURE' as const;
+export const VOTE_REQUEST = 'VOTE_REQUEST' as const;
+export const SET_DETAIL_SELECTED_IDX = 'SET_DETAIL_SELECTED_IDX' as const;
+export const SET_VOTE_PROGRESS = 'SET_VOTE_PROGRESS' as const;
+export const SET_VOTED = 'SET_VOTED' as const;
+
+export const getDetailRequest = (id: string) => ({
+  type: GET_DETAIL_REQUEST,
+  payload: id,
+});
+
+export const getDetailSuccess = (detail: VoteDetail) => ({
+  type: GET_DETAIL_SUCCESS,
+  payload: detail,
+});
+
+export const getDetailFailure = (error: Error) => ({
+  type: GET_DETAIL_FAILURE,
+  payload: error,
+});
+
+export const voteRequest = () => ({
+  type: VOTE_REQUEST,
+});
+
+export const setDetailSelectedIdx = (idx: number) => ({
+  type: SET_DETAIL_SELECTED_IDX,
+  payload: idx,
+});
+
+export const setVoted = (voted: boolean) => ({
+  type: SET_VOTED,
+  payload: voted,
+});
+
+export const setVoteProgress = (progress: boolean) => ({
+  type: SET_VOTE_PROGRESS,
+  payload: progress,
+});
+
+export type DetailActionTypes =
+  | ReturnType<typeof getDetailRequest>
+  | ReturnType<typeof getDetailSuccess>
+  | ReturnType<typeof getDetailFailure>
+  | ReturnType<typeof setDetailSelectedIdx>
+  | ReturnType<typeof setVoted>
+  | ReturnType<typeof setVoteProgress>
+  | ReturnType<typeof voteRequest>;

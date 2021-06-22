@@ -25,9 +25,12 @@ function HomeScreen() {
     navigation.navigate('Create');
   }, [navigation]);
 
-  const handlePressListItem = React.useCallback(() => {
-    navigation.navigate('Detail');
-  }, [navigation]);
+  const handlePressListItem = React.useCallback(
+    (vote: Vote) => {
+      navigation.navigate('Detail', {id: vote.id, title: vote.title});
+    },
+    [navigation],
+  );
 
   const handlePressRetry = React.useCallback(() => {
     dispatch({type: GET_LIST_REFRESHING});

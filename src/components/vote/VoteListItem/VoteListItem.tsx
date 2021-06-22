@@ -4,13 +4,13 @@ import dayjs from 'dayjs';
 
 interface Props {
   item: Vote;
-  onPressItem: (id: string) => void;
+  onPressItem: (item: Vote) => void;
 }
 
 function VoteListItem({item, onPressItem}: Props) {
   const handlePressItem = React.useCallback(() => {
     if (onPressItem) {
-      onPressItem(item.id);
+      onPressItem(item);
     }
   }, [item, onPressItem]);
 
