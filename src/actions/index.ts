@@ -186,3 +186,28 @@ export type DetailActionTypes =
   | ReturnType<typeof setVoteActivate>
   | ReturnType<typeof setVoteProgress>
   | ReturnType<typeof voteRequest>;
+
+//
+export const GET_VOTE_RESULT_FAILURE = 'GET_VOTE_RESULT_FAILURE' as const;
+export const GET_VOTE_RESULT_REQUEST = 'GET_VOTE_RESULT_REQUEST' as const;
+export const GET_VOTE_RESULT_SUCCESS = 'GET_VOTE_RESULT_SUCCESS' as const;
+
+export const getVoteResultRequest = (id: string) => ({
+  type: GET_VOTE_RESULT_REQUEST,
+  payload: id,
+});
+
+export const getVoteResultSuccess = (result: Ballots) => ({
+  type: GET_VOTE_RESULT_SUCCESS,
+  payload: result,
+});
+
+export const getVoteResultFailure = (error: Error) => ({
+  type: GET_VOTE_RESULT_FAILURE,
+  payload: error,
+});
+
+export type VoteResultActionTypes =
+  | ReturnType<typeof getVoteResultRequest>
+  | ReturnType<typeof getVoteResultSuccess>
+  | ReturnType<typeof getVoteResultFailure>;
