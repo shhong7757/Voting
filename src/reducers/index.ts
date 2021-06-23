@@ -125,7 +125,7 @@ function home(state = homeInitState, action: HomeActionTypes) {
 
 export type Detail = {
   selectedIdx: number;
-  vote: {loading: boolean; data?: VoteDetail; error?: Error};
+  vote: {loading: boolean; data?: Vote; error?: Error};
   voted: boolean;
   voteProgress: boolean;
 };

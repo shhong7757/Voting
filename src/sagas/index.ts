@@ -80,11 +80,9 @@ function* getVoteDetail(id: string) {
     yield put({
       type: GET_DETAIL_SUCCESS,
       payload: {
-        vote: {
-          ...voteDetail.data(),
-          deadline: voteDetail.data().deadline.toDate(),
-          created_at: voteDetail.data().created_at.toDate(),
-        },
+        ...voteDetail.data(),
+        deadline: voteDetail.data().deadline.toDate(),
+        created_at: voteDetail.data().created_at.toDate(),
       },
     });
   } catch (e) {
@@ -112,11 +110,9 @@ function* setVoteActivate(voteId: string) {
     yield put({
       type: GET_DETAIL_SUCCESS,
       payload: {
-        vote: {
-          ...voteDetail.data(),
-          deadline: voteDetail.data().deadline.toDate(),
-          created_at: voteDetail.data().created_at.toDate(),
-        },
+        ...voteDetail.data(),
+        deadline: voteDetail.data().deadline.toDate(),
+        created_at: voteDetail.data().created_at.toDate(),
       },
     });
 

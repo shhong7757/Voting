@@ -89,8 +89,8 @@ function DetailScreen({navigation, route}: Props) {
           <Header detail={detail} />
         </Row>
         <Row>
-          {!detail.vote.data.vote.activate ||
-          dayjs(detail.vote.data.vote.deadline).isBefore(dayjs()) ? (
+          {!detail.vote.data.activate ||
+          dayjs(detail.vote.data.deadline).isBefore(dayjs()) ? (
             <Text>투표가 종료되었습니다.</Text>
           ) : detail.voted ? (
             <Text>
@@ -99,7 +99,7 @@ function DetailScreen({navigation, route}: Props) {
             </Text>
           ) : (
             <BallotPaer
-              list={detail.vote.data.vote.list}
+              list={detail.vote.data.list}
               selectedIdx={detail.selectedIdx}
               onChangeIndex={handleChangeIdx}
             />

@@ -22,7 +22,7 @@ function DetailFooter({
     () =>
       detail.vote.data &&
       auth.account &&
-      auth.account.id === detail.vote.data.vote.account.id,
+      auth.account.id === detail.vote.data.account.id,
     [auth, detail],
   );
 

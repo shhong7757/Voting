@@ -40,7 +40,3 @@ type Ballot = {
 };
 
 type Ballots = {[accountId: string]: Ballot};
-
-type VoteDetail = {
-  vote: Vote;
-};

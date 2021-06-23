@@ -14,9 +14,9 @@ function DetailHeader({detail}: Props) {
   const [account, created_at, deadline] = React.useMemo(() => {
     if (detail.vote.data) {
       return [
-        detail.vote.data.vote.account,
-        detail.vote.data.vote.created_at,
-        detail.vote.data.vote.deadline,
+        detail.vote.data.account,
+        detail.vote.data.created_at,
+        detail.vote.data.deadline,
       ];
     }
 

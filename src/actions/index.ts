@@ -136,7 +136,7 @@ export const getDetailRequest = (id: string) => ({
   payload: id,
 });
 
-export const getDetailSuccess = (detail: VoteDetail) => ({
+export const getDetailSuccess = (detail: Vote) => ({
   type: GET_DETAIL_SUCCESS,
   payload: detail,
 });
