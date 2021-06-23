@@ -138,6 +138,7 @@ export type HomeActionTypes =
   | ReturnType<typeof setListRefreshing>;
 
 //
+export const DELETE_VOTE_REQUEST = 'DELETE_VOTE_REQUEST' as const;
 export const GET_DETAIL_FAILURE = 'GET_DETAIL_FAILURE' as const;
 export const GET_DETAIL_REQUEST = 'GET_DETAIL_REQUEST' as const;
 export const GET_DETAIL_SUCCESS = 'GET_DETAIL_SUCCESS' as const;
@@ -146,6 +147,11 @@ export const SET_VOTE_ACTIVATE = 'SET_VOTE_ACTIVATE' as const;
 export const SET_VOTE_PROGRESS = 'SET_VOTE_PROGRESS' as const;
 export const SET_VOTED = 'SET_VOTED' as const;
 export const VOTE_REQUEST = 'VOTE_REQUEST' as const;
+
+export const deleteVoteRequest = (id: string) => ({
+  type: DELETE_VOTE_REQUEST,
+  payload: id,
+});
 
 export const getDetailRequest = (id: string) => ({
   type: GET_DETAIL_REQUEST,
@@ -187,6 +193,7 @@ export const setVoteProgress = (progress: boolean) => ({
 });
 
 export type DetailActionTypes =
+  | ReturnType<typeof deleteVoteRequest>
   | ReturnType<typeof getDetailFailure>
   | ReturnType<typeof getDetailRequest>
   | ReturnType<typeof getDetailSuccess>

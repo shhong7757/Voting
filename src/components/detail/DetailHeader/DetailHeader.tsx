@@ -1,45 +1,63 @@
 import React from 'react';
-import {Detail} from '../../../reducers';
-import {View, Text} from 'react-native';
+import {Auth} from '../../../reducers';
+import {View, Text, Pressable, Alert} from 'react-native';
 import AccountProfile from '../../account/AccountProfile';
 
 import dayjs from 'dayjs';
 import {StyleSheet} from 'react-native';
 
 interface Props {
-  detail: Detail;
+  auth: Auth;
+  vote: Vote;
+  onPressDelete?: () => void;
 }
 
-function DetailHeader({detail}: Props) {
-  const [account, created_at, deadline] = React.useMemo(() => {
-    if (detail.vote.data) {
-      return [
-        detail.vote.data.account,
-        detail.vote.data.created_at,
-        detail.vote.data.deadline,
-      ];
+function DetailHeader({auth, vote, onPressDelete}: Props) {
+  const handlePressDelete = React.useCallback(() => {
+    if (onPressDelete) {
+      Alert.alert('정말 삭제하시겠습니까?', undefined, [
+        {text: '예', onPress: onPressDelete},
+        {text: '아니오'},
+      ]);
     }
+  }, [onPressDelete]);
 
-    return [{id: -1, name: 'undefined'}, undefined, undefined];
-  }, [detail]);
+  const hasPermission = React.useMemo(
+    () => auth.account && auth.account.id === vote.account.id,
+    [auth, vote],
+  );
 
-  const {creator, creatorText, dateKey, dateTableContainer, dateTableRow} =
-    styles;
+  const {
+    creator,
+    creatorText,
+    dateKey,
+    dateTableContainer,
+    dateTableRow,
+    fl1,
+    remove,
+  } = styles;
 
   return (
     <>
       <View style={creator}>
-        <Text style={creatorText}>생성자</Text>
+        <View style={fl1}>
+          <Text style={creatorText}>생성자</Text>
+        </View>
+        {hasPermission && (
+          <Pressable onPress={handlePressDelete}>
+            <Text style={remove}>삭제하기</Text>
+          </Pressable>
+        )}
       </View>
-      <AccountProfile account={account} />
+      <AccountProfile account={vote.account} />
       <View style={dateTableContainer}>
         <View style={dateTableRow}>
           <Text style={dateKey}>생성일 : </Text>
-          <Text>{dayjs(created_at).format('llll')}</Text>
+          <Text>{dayjs(vote.startDate).format('llll')}</Text>
         </View>
         <View style={dateTableRow}>
           <Text style={dateKey}>마감일 : </Text>
-          <Text>{dayjs(deadline).format('llll')}</Text>
+          <Text>{dayjs(vote.deadline).format('llll')}</Text>
         </View>
       </View>
     </>
@@ -47,11 +65,13 @@ function DetailHeader({detail}: Props) {
 }
 
 const styles = StyleSheet.create({
-  creator: {marginBottom: 8},
+  creator: {marginBottom: 8, flexDirection: 'row', alignItems: 'center'},
   creatorText: {fontSize: 16, fontWeight: 'bold'},
   dateTableContainer: {marginTop: 8},
   dateTableRow: {flexDirection: 'row'},
   dateKey: {fontWeight: 'bold'},
+  fl1: {flex: 1},
+  remove: {color: 'red'},
 });
 
 export default DetailHeader;

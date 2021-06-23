@@ -29,16 +29,37 @@ import {
   GET_VOTE_RESULT_FAILURE,
   GET_VOTE_RESULT_REQUEST,
   GET_VOTE_RESULT_SUCCESS,
+  DELETE_VOTE_REQUEST,
 } from '../actions';
 import * as navigation from '../lib/rootNavigation';
 import firestore, {
   firebase,
   FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
-import dayjs from 'dayjs';
 import {Alert} from 'react-native';
 
+import dayjs from 'dayjs';
+
 // worker
+function* deleteVote(id: string) {
+  try {
+    yield put({type: SET_VOTE_PROGRESS, payload: true});
+
+    const voteDetailRef = firestore().collection('list').doc(id);
+    yield call([voteDetailRef, voteDetailRef.delete]);
+
+    yield put({type: SET_VOTE_PROGRESS, payload: false});
+
+    yield call(navigation.pop);
+
+    yield put({type: GET_LIST_REQUEST});
+  } catch (e) {
+    yield put({type: SET_VOTE_PROGRESS, payload: false});
+
+    Alert.alert('투표를 삭제하는데 실패했습니다');
+  }
+}
+
 function* getList() {
   try {
     const listCollectionRef = firestore()
@@ -90,6 +111,7 @@ function* getVoteDetail(id: string) {
         ...voteDetail.data(),
         deadline: voteDetail.data().deadline.toDate(),
         created_at: voteDetail.data().created_at.toDate(),
+        startDate: voteDetail.data().startDate.toDate(),
       },
     });
   } catch (e) {
@@ -205,7 +227,7 @@ function* vote(id: string) {
   } catch (e) {
     yield put({type: SET_VOTE_PROGRESS, payload: false});
 
-    Alert.alert('투표하는데 실패했습니다', `실패사유\n${e.message}`);
+    Alert.alert('투표하는데 실패했습니다');
   }
 }
 
@@ -222,6 +244,13 @@ function* getVOteResult(id: string) {
 }
 
 // watcher
+function* watchDeleteVote() {
+  while (true) {
+    const {payload} = yield take(DELETE_VOTE_REQUEST);
+    yield fork(deleteVote, payload);
+  }
+}
+
 function* watchGetList() {
   while (true) {
     const action: {type: string} = yield take([
@@ -278,6 +307,7 @@ function* watchVote() {
 
 export default function* root() {
   yield all([
+    fork(watchDeleteVote),
     fork(watchGetList),
     fork(watchGetVoteDetail),
     fork(watchGetVoteResult),

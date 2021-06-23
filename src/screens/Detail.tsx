@@ -1,6 +1,7 @@
 import React from 'react';
 import {AppDispatch} from '../store';
 import {
+  DELETE_VOTE_REQUEST,
   GET_DETAIL_REQUEST,
   SET_DETAIL_SELECTED_IDX,
   SET_VOTE_ACTIVATE,
@@ -75,6 +76,13 @@ function DetailScreen({navigation, route}: Props) {
     );
   }, [detail, dispatch, route]);
 
+  const handlePressDelete = React.useCallback(() => {
+    dispatch({
+      type: DELETE_VOTE_REQUEST,
+      payload: route.params.id,
+    });
+  }, [dispatch, route]);
+
   if (detail.vote.loading) {
     return <LoadingScreen />;
   } else if (detail.vote.error) {
@@ -88,7 +96,11 @@ function DetailScreen({navigation, route}: Props) {
       <>
         <LoadingOverlay visible={detail.voteProgress} />
         <Row>
-          <Header detail={detail} />
+          <Header
+            auth={auth}
+            vote={detail.vote.data}
+            onPressDelete={handlePressDelete}
+          />
         </Row>
         <Row>
           {getVoteStatus(detail.vote.data) === 'DONE' ? (
