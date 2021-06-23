@@ -41,7 +41,9 @@ import {Alert} from 'react-native';
 // worker
 function* getList() {
   try {
-    const listCollectionRef = firestore().collection('list');
+    const listCollectionRef = firestore()
+      .collection('list')
+      .orderBy('created_at', 'desc');
     const listSnapshot: FirebaseFirestoreTypes.QuerySnapshot<GetVoetListResponseData> =
       yield call([listCollectionRef, listCollectionRef.get]);
 
@@ -51,6 +53,7 @@ function* getList() {
         id: doc.id,
         deadline: doc.data().deadline.toDate(),
         created_at: doc.data().created_at.toDate(),
+        startDate: doc.data().startDate.toDate(),
       };
     });
     yield put({type: GET_LIST_SUCCESS, payload: list});
@@ -141,11 +144,13 @@ function* submitForm() {
     const data: GetVoteListRequestPayload & {
       created_at: FirebaseFirestoreTypes.Timestamp;
       deadline: FirebaseFirestoreTypes.Timestamp;
+      startDate: FirebaseFirestoreTypes.Timestamp;
     } = {
       activate: true,
       account: auth.account || {id: -1, name: 'undefined'},
       created_at: firebase.firestore.Timestamp.fromDate(dayjs().toDate()),
       deadline: firebase.firestore.Timestamp.fromDate(formData.deadline),
+      startDate: firebase.firestore.Timestamp.fromDate(formData.startDate),
       list: formData.list,
       title: formData.title,
     };

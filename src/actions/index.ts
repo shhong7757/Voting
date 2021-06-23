@@ -25,6 +25,7 @@ export type AccountActionTypes =
 //
 export const INIT_FORM = 'INIT_FORM' as const;
 export const SET_FORM_DEADLINE = 'SET_FORM_DEADLINE' as const;
+export const SET_FORM_START_DATE = 'SET_FORM_START_DATE' as const;
 export const SET_FORM_TITLE = 'SET_FORM_TITLE' as const;
 export const SET_FORM_VALIDATION_ERROR = 'SET_FORM_VALIDATION_ERROR' as const;
 export const SET_FORM_VOTE_LIST = 'SET_FORM_VOTE_LIST' as const;
@@ -35,6 +36,11 @@ export const initForm = () => ({type: INIT_FORM});
 
 export const setFormDeadLine = (date: Date) => ({
   type: SET_FORM_DEADLINE,
+  payload: date,
+});
+
+export const setFormStartDate = (date: Date) => ({
+  type: SET_FORM_START_DATE,
   payload: date,
 });
 
@@ -63,6 +69,7 @@ export const submitForm = () => ({type: SUBMIT_FORM});
 export type FormActionTypes =
   | ReturnType<typeof initForm>
   | ReturnType<typeof setFormDeadLine>
+  | ReturnType<typeof setFormStartDate>
   | ReturnType<typeof setFormTitle>
   | ReturnType<typeof setFormValidationError>
   | ReturnType<typeof setFormVoteList>
@@ -107,6 +114,7 @@ export type GetVoteListRequestPayload = Omit<
     {
       created_at: FirebaseFirestoreTypes.Timestamp;
       deadline: FirebaseFirestoreTypes.Timestamp;
+      startDate: FirebaseFirestoreTypes.Timestamp;
     }
   >,
   'id'
@@ -117,6 +125,7 @@ export type GetVoetListResponseData = Merge<
   {
     created_at: FirebaseFirestoreTypes.Timestamp;
     deadline: FirebaseFirestoreTypes.Timestamp;
+    startDate: FirebaseFirestoreTypes.Timestamp;
   }
 >;
 

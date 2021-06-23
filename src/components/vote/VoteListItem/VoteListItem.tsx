@@ -3,6 +3,7 @@ import {getVoteStatus} from '../../../lib/detailt';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 
 import dayjs from 'dayjs';
+import {Alert} from 'react-native';
 
 interface Props {
   item: Vote;
@@ -11,6 +12,10 @@ interface Props {
 
 function VoteListItem({item, onPressItem}: Props) {
   const handlePressItem = React.useCallback(() => {
+    if (dayjs(item.startDate).isAfter(dayjs())) {
+      return Alert.alert('아직 투표가 시작되지 않았습니다.');
+    }
+
     if (onPressItem) {
       onPressItem(item);
     }
@@ -33,6 +38,12 @@ function VoteListItem({item, onPressItem}: Props) {
           <Text>작성자</Text>
           <View style={rowValue}>
             <Text>{item.account.name}</Text>
+          </View>
+        </View>
+        <View style={row}>
+          <Text>시작일</Text>
+          <View style={rowValue}>
+            <Text>{dayjs(item.startDate).format('llll')}</Text>
           </View>
         </View>
         <View style={row}>

@@ -16,22 +16,29 @@ import {AppDispatch} from '../store';
 import {RootState} from '../reducers';
 import {
   SET_FORM_DEADLINE,
+  SET_FORM_START_DATE,
   SET_FORM_TITLE,
   SET_FORM_VOTE_LIST,
 } from '../actions';
 import WithValidateError from '../components/form/WithValidateError';
 
 function CreateScreen() {
-  const {deadline, list, title, loading, validationError} = useSelector(
-    (state: RootState) => state.form,
-  );
+  const {deadline, list, title, loading, startDate, validationError} =
+    useSelector((state: RootState) => state.form);
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const [showDatePicker, setShowDatePicker] = React.useState(false);
+  const [showDeadlineDatePicker, setShowDeadlineDatePicker] =
+    React.useState(false);
+  const [showStartDatePicker, setShowStartDatePicker] = React.useState(false);
 
-  const handlePressEditDate = React.useCallback(
-    () => setShowDatePicker(prevShowDatePicker => !prevShowDatePicker),
+  const handlePressDeadlineEditDate = React.useCallback(
+    () => setShowDeadlineDatePicker(prevShowDatePicker => !prevShowDatePicker),
+    [],
+  );
+
+  const handlePressStartDateEditDate = React.useCallback(
+    () => setShowStartDatePicker(prevShowDatePicker => !prevShowDatePicker),
     [],
   );
 
@@ -45,10 +52,20 @@ function CreateScreen() {
     [dispatch],
   );
 
-  const handleChangeDate = React.useCallback(
+  const handleChangeDeadline = React.useCallback(
     (changedDate: Date) => {
       dispatch({
         type: SET_FORM_DEADLINE,
+        payload: changedDate,
+      });
+    },
+    [dispatch],
+  );
+
+  const handleChangeStartDate = React.useCallback(
+    (changedDate: Date) => {
+      dispatch({
+        type: SET_FORM_START_DATE,
         payload: changedDate,
       });
     },
@@ -78,23 +95,44 @@ function CreateScreen() {
           </WithValidateError>
         </View>
         <View style={rowWrapper}>
+          <WithValidateError errors={validationError} property="startDate">
+            <View style={fldr}>
+              <View style={fl1}>
+                <Text>시간시간 설정</Text>
+              </View>
+              <Pressable onPress={handlePressStartDateEditDate}>
+                <Text>{showStartDatePicker ? '완료' : '수정'}</Text>
+              </Pressable>
+            </View>
+            <Text>{dayjs(startDate).format('llll')}</Text>
+            <View style={datePickerWrapper}>
+              {showStartDatePicker && (
+                <DatePicker
+                  date={startDate}
+                  onDateChange={handleChangeStartDate}
+                  locale="ko"
+                  minimumDate={new Date()}
+                />
+              )}
+            </View>
+          </WithValidateError>
           <WithValidateError errors={validationError} property="deadline">
             <View style={fldr}>
               <View style={fl1}>
                 <Text>마감시간 설정</Text>
               </View>
-              <Pressable onPress={handlePressEditDate}>
-                <Text>{showDatePicker ? '완료' : '수정'}</Text>
+              <Pressable onPress={handlePressDeadlineEditDate}>
+                <Text>{showDeadlineDatePicker ? '완료' : '수정'}</Text>
               </Pressable>
             </View>
             <Text>{dayjs(deadline).format('llll')}</Text>
             <View style={datePickerWrapper}>
-              {showDatePicker && (
+              {showDeadlineDatePicker && (
                 <DatePicker
                   date={deadline}
-                  onDateChange={handleChangeDate}
+                  onDateChange={handleChangeDeadline}
                   locale="ko"
-                  minimumDate={new Date()}
+                  minimumDate={dayjs(startDate).toDate()}
                 />
               )}
             </View>

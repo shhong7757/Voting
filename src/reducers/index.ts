@@ -29,6 +29,7 @@ import {
   SET_VOTE_PROGRESS,
   SET_VOTED,
   VoteResultActionTypes,
+  SET_FORM_START_DATE,
 } from '../actions';
 
 export type Auth = {account?: Account};
@@ -47,10 +48,11 @@ function auth(state = authInitState, action: AccountActionTypes) {
 }
 
 export type Form = {
-  title: string;
   deadline: Date;
   list: Array<string>;
   loading: boolean;
+  startDate: Date;
+  title: string;
   validationError: Array<keyof Omit<Form, 'loading' | 'validationError'>>;
 };
 
@@ -60,6 +62,7 @@ const formInitState: Form = {
   deadline: dayjs().add(dayOffset, 'd').minute(0).toDate(),
   list: new Array<string>(limitOfList).fill(''),
   loading: false,
+  startDate: dayjs().toDate(),
   title: '',
   validationError: [],
 };
@@ -70,6 +73,8 @@ function form(state = formInitState, action: FormActionTypes) {
       return formInitState;
     case SET_FORM_DEADLINE:
       return {...state, deadline: action.payload};
+    case SET_FORM_START_DATE:
+      return {...state, startDate: action.payload};
     case SET_FORM_VALIDATION_ERROR:
       return {...state, validationError: action.payload};
     case SET_FORM_TITLE:
