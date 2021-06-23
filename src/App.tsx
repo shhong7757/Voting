@@ -20,6 +20,7 @@ import FormHeaderRight from './components/form/FormHeaderRight';
 import {navigationRef} from './lib/rootNavigation';
 import FormHeaderLeft from './components/form/FormHeaderLeft';
 import RootBottomTab from './components/bottomTab/RootBottomTab/RootBottomTab';
+import ResultScreen from './screens/Result';
 
 const AuthFlowStack = createStackNavigator();
 const MainStack = createStackNavigator<MainStackParamList>();
@@ -31,6 +32,7 @@ const MainStacNavigator = () => {
     <MainStack.Navigator initialRouteName="Home">
       <MainStack.Screen name="Home" component={HomeScreen} />
       <MainStack.Screen name="Detail" component={DetailScreen} />
+      <MainStack.Screen name="Result" component={ResultScreen} />
     </MainStack.Navigator>
   );
 };

@@ -52,7 +52,9 @@ function DetailScreen({navigation, route}: Props) {
     dispatch({type: SET_VOTE_ACTIVATE, payload: route.params.id});
   }, [dispatch, route]);
 
-  const handlePressShowResult = React.useCallback(() => {}, []);
+  const handlePressShowResult = React.useCallback(() => {
+    navigation.navigate('Result', {id: route.params.id});
+  }, [navigation, route]);
 
   const handlePressVote = React.useCallback(() => {
     if (detail.selectedIdx < 0) {

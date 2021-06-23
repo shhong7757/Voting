@@ -6,6 +6,7 @@ type Merge<M, N> = Omit<M, Extract<keyof M, keyof N>> & N;
 type MainStackParamList = {
   Home: undefined;
   Detail: {id: string; title: string};
+  Result: {id: string};
 };
 
 type MyStackParamList = {
