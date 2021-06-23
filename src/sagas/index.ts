@@ -7,23 +7,24 @@ import {all, take, fork, select, call, put} from 'redux-saga/effects';
 import {Auth, Detail, Form} from '../reducers';
 import {getFormData, getAuth, getDetail} from '../reducers/selectors';
 import {
-  GetVoteListRequestPayload,
-  GetVoetListResponseData,
+  GET_DETAIL_FAILURE,
+  GET_DETAIL_REQUEST,
+  GET_DETAIL_SUCCESS,
   GET_LIST_FAILURE,
+  GET_LIST_REFRESHING,
   GET_LIST_REQUEST,
   GET_LIST_SUCCESS,
+  GetVoetListResponseData,
+  GetVoteListRequestPayload,
   INIT_FORM,
   SET_FORM_VALIDATION_ERROR,
-  SET_SUBMIT_LOADING,
-  SUBMIT_FORM,
-  GET_LIST_REFRESHING,
   SET_LIST_REFRESHING,
-  GET_DETAIL_REQUEST,
-  GET_DETAIL_FAILURE,
-  GET_DETAIL_SUCCESS,
-  VOTE_REQUEST,
+  SET_SUBMIT_LOADING,
+  SET_VOTE_ACTIVATE,
   SET_VOTE_PROGRESS,
   SET_VOTED,
+  SUBMIT_FORM,
+  VOTE_REQUEST,
 } from '../actions';
 import * as navigation from '../lib/rootNavigation';
 import firestore, {
@@ -34,44 +35,6 @@ import dayjs from 'dayjs';
 import {Alert} from 'react-native';
 
 // worker
-function* submitForm() {
-  try {
-    const formData: Form = yield select(getFormData);
-    const auth: Auth = yield select(getAuth);
-
-    validateFormData(formData);
-
-    const data: GetVoteListRequestPayload & {
-      created_at: FirebaseFirestoreTypes.Timestamp;
-      deadline: FirebaseFirestoreTypes.Timestamp;
-    } = {
-      account: auth.account || {id: -1, name: 'undefined'},
-      created_at: firebase.firestore.Timestamp.fromDate(dayjs().toDate()),
-      deadline: firebase.firestore.Timestamp.fromDate(formData.deadline),
-      list: formData.list,
-      title: formData.title,
-      voter: [],
-    };
-
-    yield put({type: SET_SUBMIT_LOADING, payload: true});
-
-    const listCollectionRef = firestore().collection('list');
-    yield call([listCollectionRef, listCollectionRef.add], data);
-
-    yield put({type: SET_SUBMIT_LOADING, payload: false});
-    yield put({type: INIT_FORM});
-
-    yield call(navigation.goBack);
-
-    yield put({type: GET_LIST_REQUEST});
-  } catch (e) {
-    if (e instanceof FormValidationError) {
-      yield put({type: SET_FORM_VALIDATION_ERROR, payload: e.properties});
-    }
-    yield put({type: SET_SUBMIT_LOADING, payload: false});
-  }
-}
-
 function* getList() {
   try {
     const listCollectionRef = firestore().collection('list');
@@ -129,6 +92,79 @@ function* getVoteDetail(id: string) {
   }
 }
 
+function* setVoteActivate(voteId: string) {
+  try {
+    yield put({type: SET_VOTE_PROGRESS, payload: true});
+
+    const voteDetailRef = firestore().collection('list').doc(voteId);
+
+    yield call(
+      [voteDetailRef, voteDetailRef.set],
+      {
+        activate: false,
+      },
+      {merge: true},
+    );
+
+    const voteDetail: FirebaseFirestoreTypes.QueryDocumentSnapshot<GetVoetListResponseData> =
+      yield call([voteDetailRef, voteDetailRef.get]);
+
+    yield put({
+      type: GET_DETAIL_SUCCESS,
+      payload: {
+        vote: {
+          ...voteDetail.data(),
+          deadline: voteDetail.data().deadline.toDate(),
+          created_at: voteDetail.data().created_at.toDate(),
+        },
+      },
+    });
+
+    yield put({type: SET_VOTE_PROGRESS, payload: false});
+  } catch (e) {
+    //
+    yield put({type: SET_VOTE_PROGRESS, payload: false});
+  }
+}
+
+function* submitForm() {
+  try {
+    const formData: Form = yield select(getFormData);
+    const auth: Auth = yield select(getAuth);
+
+    validateFormData(formData);
+
+    const data: GetVoteListRequestPayload & {
+      created_at: FirebaseFirestoreTypes.Timestamp;
+      deadline: FirebaseFirestoreTypes.Timestamp;
+    } = {
+      activate: true,
+      account: auth.account || {id: -1, name: 'undefined'},
+      created_at: firebase.firestore.Timestamp.fromDate(dayjs().toDate()),
+      deadline: firebase.firestore.Timestamp.fromDate(formData.deadline),
+      list: formData.list,
+      title: formData.title,
+    };
+
+    yield put({type: SET_SUBMIT_LOADING, payload: true});
+
+    const listCollectionRef = firestore().collection('list');
+    yield call([listCollectionRef, listCollectionRef.add], data);
+
+    yield put({type: SET_SUBMIT_LOADING, payload: false});
+    yield put({type: INIT_FORM});
+
+    yield call(navigation.goBack);
+
+    yield put({type: GET_LIST_REQUEST});
+  } catch (e) {
+    if (e instanceof FormValidationError) {
+      yield put({type: SET_FORM_VALIDATION_ERROR, payload: e.properties});
+    }
+    yield put({type: SET_SUBMIT_LOADING, payload: false});
+  }
+}
+
 function* vote(id: string) {
   try {
     const auth: Auth = yield select(getAuth);
@@ -165,13 +201,6 @@ function* vote(id: string) {
 }
 
 // watcher
-function* watchSubmitForm() {
-  while (true) {
-    yield take(SUBMIT_FORM);
-    yield fork(submitForm);
-  }
-}
-
 function* watchGetList() {
   while (true) {
     const action: {type: string} = yield take([
@@ -198,6 +227,20 @@ function* watchGetVoteDetail() {
   }
 }
 
+function* watchSetVoteActivate() {
+  while (true) {
+    const {payload} = yield take(SET_VOTE_ACTIVATE);
+    yield call(setVoteActivate, payload);
+  }
+}
+
+function* watchSubmitForm() {
+  while (true) {
+    yield take(SUBMIT_FORM);
+    yield fork(submitForm);
+  }
+}
+
 function* watchVote() {
   while (true) {
     const {payload} = yield take(VOTE_REQUEST);
@@ -207,9 +250,10 @@ function* watchVote() {
 
 export default function* root() {
   yield all([
-    fork(watchSubmitForm),
     fork(watchGetList),
     fork(watchGetVoteDetail),
+    fork(watchSetVoteActivate),
+    fork(watchSubmitForm),
     fork(watchVote),
   ]);
 }

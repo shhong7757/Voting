@@ -26,12 +26,12 @@ type Account = {
 
 type Vote = {
   id: string;
+  activate: boolean;
   account: Account;
   created_at: Date;
   deadline: Date;
   list: Array<string>;
   title: string;
-  voter: Array<Account>;
 };
 
 type Ballot = {

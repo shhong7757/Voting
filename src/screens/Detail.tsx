@@ -3,6 +3,7 @@ import {AppDispatch} from '../store';
 import {
   GET_DETAIL_REQUEST,
   SET_DETAIL_SELECTED_IDX,
+  SET_VOTE_ACTIVATE,
   VOTE_REQUEST,
 } from '../actions';
 import {getAuth, getDetail} from '../reducers/selectors';
@@ -17,6 +18,7 @@ import Header from '../components/detail/DetailHeader';
 import LoadingScreen from '../components/common/LoadingScreen';
 import Row from '../components/common/Row';
 import LoadingOverlay from '../components/common/LoadingOverlay';
+import dayjs from 'dayjs';
 
 interface Props {
   route: RouteProp<MainStackParamList, 'Detail'>;
@@ -46,7 +48,9 @@ function DetailScreen({navigation, route}: Props) {
     [dispatch],
   );
 
-  const handlePressEndVote = React.useCallback(() => {}, []);
+  const handlePressEndVote = React.useCallback(() => {
+    dispatch({type: SET_VOTE_ACTIVATE, payload: route.params.id});
+  }, [dispatch, route]);
 
   const handlePressShowResult = React.useCallback(() => {}, []);
 
@@ -85,7 +89,10 @@ function DetailScreen({navigation, route}: Props) {
           <Header detail={detail} />
         </Row>
         <Row>
-          {detail.voted ? (
+          {!detail.vote.data.vote.activate ||
+          dayjs(detail.vote.data.vote.deadline).isBefore(dayjs()) ? (
+            <Text>투표가 종료되었습니다.</Text>
+          ) : detail.voted ? (
             <Text>
               이미 투표를 하셨습니다. 투표가 종료된 이후부터 투표결과를 확인하실
               수 있습니다.
