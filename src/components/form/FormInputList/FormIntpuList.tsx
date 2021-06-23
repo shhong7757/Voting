@@ -1,6 +1,13 @@
 import React from 'react';
 import Button from '../../common/Button';
-import {Pressable, StyleSheet, TextInput, Text, View} from 'react-native';
+import {
+  Pressable,
+  StyleSheet,
+  TextInput,
+  Text,
+  View,
+  Alert,
+} from 'react-native';
 
 interface Props {
   list: Array<string>;
@@ -23,9 +30,13 @@ function FormIntpuList({list, onChangeList}: Props) {
 
   const handlePressRemoveItem = React.useCallback(
     (idx: number) => {
-      const newItems = [...listItems];
-      newItems.splice(idx, 1);
-      setListItems(newItems);
+      if (listItems.length <= 3) {
+        Alert.alert('투표항목은 최소 3개 이상이여야 합니다.');
+      } else {
+        const newItems = [...listItems];
+        newItems.splice(idx, 1);
+        setListItems(newItems);
+      }
     },
     [listItems],
   );

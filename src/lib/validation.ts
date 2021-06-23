@@ -36,7 +36,13 @@ export function validateFormData(data: Form) {
     properties.push('startDate');
   }
 
-  if (data.list.filter(item => item === '').length > 0) {
+  //
+  const newSet = new Set();
+  data.list.forEach(v => newSet.add(v));
+  if (
+    newSet.size !== data.list.length ||
+    data.list.filter(item => item === '').length > 0
+  ) {
     properties.push('list');
   }
 
@@ -50,13 +56,13 @@ export function getFormValidationMessage(
 ) {
   switch (error) {
     case 'deadline':
-      return '마감 시간은 시작 시간 이후로 설정해주세요';
+      return '마감 시간은 시작 시간 이후로 설정이 필요합니다.';
     case 'list':
-      return '항목을 모두 채워주세요.';
+      return '항목 중복 또는 빈 항목이 있어서는 안됩니다.';
     case 'title':
       return '제목을 작성해주세요.';
     case 'startDate':
-      return '시작 시간은 현재 시간 이후로 설정해주세요';
+      return '시작 시간은 현재 시간 이후로 설정이 필요합니다.';
     default:
       return '';
   }
