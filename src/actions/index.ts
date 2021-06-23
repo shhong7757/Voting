@@ -75,6 +75,7 @@ export const GET_LIST_REQUEST = 'GET_LIST_REQUEST' as const;
 export const GET_LIST_SUCCESS = 'GET_LIST_SUCCESS' as const;
 export const GET_LIST_FAILURE = 'GET_LIST_FAILURE' as const;
 export const SET_LIST_REFRESHING = 'SET_LIST_REFRESHING' as const;
+export const SET_LIST_ITEM_ACTIVATE = 'SET_LIST_ITEM_ACTIVATE' as const;
 
 export const getListRefreshing = () => ({type: GET_LIST_REFRESHING});
 
@@ -88,6 +89,11 @@ export const getListSuccess = (list: Array<Vote>) => ({
 export const getListFailure = (error: Error) => ({
   type: GET_LIST_FAILURE,
   payload: error,
+});
+
+export const setListItemActivate = (id: string, activate: boolean) => ({
+  type: SET_LIST_ITEM_ACTIVATE,
+  payload: {id, activate},
 });
 
 export const setListRefreshing = (refreshing: boolean) => ({
@@ -119,6 +125,7 @@ export type HomeActionTypes =
   | ReturnType<typeof getListFailure>
   | ReturnType<typeof getListRequest>
   | ReturnType<typeof getListSuccess>
+  | ReturnType<typeof setListItemActivate>
   | ReturnType<typeof setListRefreshing>;
 
 //
