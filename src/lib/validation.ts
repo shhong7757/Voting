@@ -13,6 +13,13 @@ export class FormValidationError extends Error {
   }
 }
 
+export class AuthValidationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'AuthValidationError';
+  }
+}
+
 export function validateFormData(data: Form) {
   const properties: Array<FormProperty> = [];
 

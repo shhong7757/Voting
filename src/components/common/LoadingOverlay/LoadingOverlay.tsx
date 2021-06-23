@@ -11,7 +11,7 @@ function LoadingOverlay({visible}: Props) {
   return (
     <Modal transparent visible={visible}>
       <View style={overlay}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="small" />
       </View>
     </Modal>
   );

@@ -17,6 +17,13 @@ import {
   GET_LIST_REQUEST,
   GET_LIST_SUCCESS,
   SET_LIST_REFRESHING,
+  DetailActionTypes,
+  GET_DETAIL_REQUEST,
+  GET_DETAIL_SUCCESS,
+  GET_DETAIL_FAILURE,
+  SET_DETAIL_SELECTED_IDX,
+  SET_VOTED,
+  SET_VOTE_PROGRESS,
 } from '../actions';
 
 export type Auth = {account?: Account};
@@ -116,16 +123,62 @@ function home(state = homeInitState, action: HomeActionTypes) {
   }
 }
 
+export type Detail = {
+  selectedIdx: number;
+  vote: {loading: boolean; data?: Vote; error?: Error};
+  voted: boolean;
+  voteProgress: boolean;
+};
+
+const detailInitState: Detail = {
+  selectedIdx: -1,
+  vote: {loading: false, data: undefined, error: undefined},
+  voteProgress: false,
+  voted: false,
+};
+
+function detail(state = detailInitState, action: DetailActionTypes) {
+  switch (action.type) {
+    case GET_DETAIL_REQUEST:
+      return {...state, vote: {...state.vote, loading: true}};
+    case GET_DETAIL_SUCCESS: {
+      return {
+        ...state,
+        vote: {data: action.payload, loading: false, error: undefined},
+      };
+    }
+    case GET_DETAIL_FAILURE: {
+      return {
+        ...state,
+        vote: {...state.vote, loading: false, error: action.payload},
+      };
+    }
+    case SET_DETAIL_SELECTED_IDX: {
+      return {...state, selectedIdx: action.payload};
+    }
+    case SET_VOTE_PROGRESS: {
+      return {...state, voteProgress: action.payload};
+    }
+    case SET_VOTED: {
+      return {...state, voted: action.payload};
+    }
+    default:
+      return state;
+  }
+}
+
 export type RootState = {
   home: Home;
   auth: Auth;
   form: Form;
+  detail: Detail;
 };
 
 const rootReducer = combineReducers({
   auth,
   form,
   home,
+  detail,
 });
 
 export default rootReducer;

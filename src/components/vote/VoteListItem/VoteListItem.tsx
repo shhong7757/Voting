@@ -1,29 +1,26 @@
 import React from 'react';
+import {getVoteStatus} from '../../../lib/detailt';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
+
 import dayjs from 'dayjs';
 
 interface Props {
   item: Vote;
-  onPressItem: (id: string) => void;
+  onPressItem: (item: Vote) => void;
 }
 
 function VoteListItem({item, onPressItem}: Props) {
   const handlePressItem = React.useCallback(() => {
     if (onPressItem) {
-      onPressItem(item.id);
+      onPressItem(item);
     }
   }, [item, onPressItem]);
-
-  const proceeding = React.useMemo(
-    () => dayjs(item.deadline).isBefore(dayjs()),
-    [item],
-  );
 
   const {labelWrapper, label, wrapper, labelText, row, rowValue, title, table} =
     styles;
   return (
     <Pressable onPress={handlePressItem} style={wrapper}>
-      {proceeding && (
+      {getVoteStatus(item) === 'DONE' && (
         <View style={labelWrapper}>
           <View style={label}>
             <Text style={labelText}>마감</Text>

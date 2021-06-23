@@ -5,7 +5,8 @@ type Merge<M, N> = Omit<M, Extract<keyof M, keyof N>> & N;
 
 type MainStackParamList = {
   Home: undefined;
-  Detail: undefined;
+  Detail: {id: string; title: string};
+  Result: {id: string};
 };
 
 type MyStackParamList = {
@@ -26,10 +27,19 @@ type Account = {
 
 type Vote = {
   id: string;
+  activate: boolean;
   account: Account;
   created_at: Date;
   deadline: Date;
   list: Array<string>;
   title: string;
-  voter: Array<Account>;
 };
+
+type VoteStatus = 'DONE' | 'INPROGRESS' | 'NONE';
+
+type Ballot = {
+  account: Account;
+  value: string;
+};
+
+type Ballots = {[accountId: string]: Ballot};
