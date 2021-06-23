@@ -2,29 +2,33 @@ import dayjs from 'dayjs';
 import {combineReducers} from 'redux';
 import {
   AccountActionTypes,
-  LOGOUT,
-  RESTORE_ACCOUNT,
-  SELECT_ACCOUNT,
+  DetailActionTypes,
   FormActionTypes,
-  SET_FORM_DEADLINE,
-  SET_FORM_TITLE,
-  SET_FORM_VOTE_LIST,
-  INIT_FORM,
-  SET_SUBMIT_LOADING,
-  SET_FORM_VALIDATION_ERROR,
-  HomeActionTypes,
+  GET_DETAIL_FAILURE,
+  GET_DETAIL_REQUEST,
+  GET_DETAIL_SUCCESS,
   GET_LIST_FAILURE,
   GET_LIST_REQUEST,
   GET_LIST_SUCCESS,
-  SET_LIST_REFRESHING,
-  DetailActionTypes,
-  GET_DETAIL_REQUEST,
-  GET_DETAIL_SUCCESS,
-  GET_DETAIL_FAILURE,
+  GET_VOTE_RESULT_FAILURE,
+  GET_VOTE_RESULT_REQUEST,
+  GET_VOTE_RESULT_SUCCESS,
+  HomeActionTypes,
+  INIT_FORM,
+  LOGOUT,
+  RESTORE_ACCOUNT,
+  SELECT_ACCOUNT,
   SET_DETAIL_SELECTED_IDX,
-  SET_VOTED,
-  SET_VOTE_PROGRESS,
+  SET_FORM_DEADLINE,
+  SET_FORM_TITLE,
+  SET_FORM_VALIDATION_ERROR,
+  SET_FORM_VOTE_LIST,
   SET_LIST_ITEM_ACTIVATE,
+  SET_LIST_REFRESHING,
+  SET_SUBMIT_LOADING,
+  SET_VOTE_PROGRESS,
+  SET_VOTED,
+  VoteResultActionTypes,
 } from '../actions';
 
 export type Auth = {account?: Account};
@@ -178,11 +182,48 @@ function detail(state = detailInitState, action: DetailActionTypes) {
   }
 }
 
+//
+export type VoteResult = {
+  data?: Ballots;
+  loading: boolean;
+  error?: Error;
+};
+
+const resultInitState = {
+  data: undefined,
+  loading: false,
+  error: undefined,
+};
+
+function voteResult(state = resultInitState, action: VoteResultActionTypes) {
+  switch (action.type) {
+    case GET_VOTE_RESULT_REQUEST:
+      return {...state, loading: true};
+    case GET_VOTE_RESULT_SUCCESS: {
+      return {
+        ...state,
+        loading: false,
+        data: action.payload,
+      };
+    }
+    case GET_VOTE_RESULT_FAILURE: {
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+    }
+    default:
+      return state;
+  }
+}
+
 export type RootState = {
   home: Home;
   auth: Auth;
   form: Form;
   detail: Detail;
+  voteResult: VoteResult;
 };
 
 const rootReducer = combineReducers({
@@ -190,6 +231,7 @@ const rootReducer = combineReducers({
   form,
   home,
   detail,
+  voteResult,
 });
 
 export default rootReducer;

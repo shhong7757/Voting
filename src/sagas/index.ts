@@ -26,6 +26,9 @@ import {
   SUBMIT_FORM,
   VOTE_REQUEST,
   SET_LIST_ITEM_ACTIVATE,
+  GET_VOTE_RESULT_FAILURE,
+  GET_VOTE_RESULT_REQUEST,
+  GET_VOTE_RESULT_SUCCESS,
 } from '../actions';
 import * as navigation from '../lib/rootNavigation';
 import firestore, {
@@ -201,6 +204,18 @@ function* vote(id: string) {
   }
 }
 
+function* getVOteResult(id: string) {
+  try {
+    const ballotRef = firestore().collection('ballots').doc(id);
+    const ballot: FirebaseFirestoreTypes.QueryDocumentSnapshot<Ballots> =
+      yield call([ballotRef, ballotRef.get]);
+
+    yield put({type: GET_VOTE_RESULT_SUCCESS, payload: ballot.data()});
+  } catch (e) {
+    yield put({type: GET_VOTE_RESULT_FAILURE, payload: e});
+  }
+}
+
 // watcher
 function* watchGetList() {
   while (true) {
@@ -225,6 +240,13 @@ function* watchGetVoteDetail() {
   while (true) {
     const {payload}: {payload: string} = yield take([GET_DETAIL_REQUEST]);
     yield fork(getVoteDetail, payload);
+  }
+}
+
+function* watchGetVoteResult() {
+  while (true) {
+    const {payload} = yield take(GET_VOTE_RESULT_REQUEST);
+    yield fork(getVOteResult, payload);
   }
 }
 
@@ -253,6 +275,7 @@ export default function* root() {
   yield all([
     fork(watchGetList),
     fork(watchGetVoteDetail),
+    fork(watchGetVoteResult),
     fork(watchSetVoteActivate),
     fork(watchSubmitForm),
     fork(watchVote),
