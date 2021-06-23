@@ -24,6 +24,7 @@ import {
   SET_DETAIL_SELECTED_IDX,
   SET_VOTED,
   SET_VOTE_PROGRESS,
+  SET_LIST_ITEM_ACTIVATE,
 } from '../actions';
 
 export type Auth = {account?: Account};
@@ -113,6 +114,16 @@ function home(state = homeInitState, action: HomeActionTypes) {
           error: undefined,
         },
       };
+    case SET_LIST_ITEM_ACTIVATE:
+      const newData = state.list.data
+        ? state.list.data.map(v =>
+            v.id === action.payload.id
+              ? {...v, activate: action.payload.activate}
+              : v,
+          )
+        : [];
+
+      return {...state, list: {...state.list, data: newData}};
     case SET_LIST_REFRESHING:
       return {
         ...state,

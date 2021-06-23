@@ -25,6 +25,7 @@ import {
   SET_VOTED,
   SUBMIT_FORM,
   VOTE_REQUEST,
+  SET_LIST_ITEM_ACTIVATE,
 } from '../actions';
 import * as navigation from '../lib/rootNavigation';
 import firestore, {
@@ -114,6 +115,10 @@ function* setVoteActivate(voteId: string) {
         deadline: voteDetail.data().deadline.toDate(),
         created_at: voteDetail.data().created_at.toDate(),
       },
+    });
+    yield put({
+      type: SET_LIST_ITEM_ACTIVATE,
+      payload: {id: voteId, activate: false},
     });
 
     yield put({type: SET_VOTE_PROGRESS, payload: false});
