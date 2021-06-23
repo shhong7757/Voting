@@ -1,11 +1,13 @@
 import React from 'react';
-import {Auth, Detail} from '../../../reducers';
+import {Auth} from '../../../reducers';
+import {getVoteStatus} from '../../../lib/detailt';
 import {View, Text, StyleSheet} from 'react-native';
 import Button from '../../common/Button';
 
 interface Props {
   auth: Auth;
-  detail: Detail;
+  vote: Vote;
+  voted: boolean;
   onPressEndVote?: () => void;
   onPressShowResult?: () => void;
   onPressVote?: () => void;
@@ -13,50 +15,71 @@ interface Props {
 
 function DetailFooter({
   auth,
-  detail,
+  vote,
+  voted,
   onPressEndVote,
   onPressShowResult,
   onPressVote,
 }: Props) {
   const hasPermission = React.useMemo(
-    () =>
-      detail.vote.data &&
-      auth.account &&
-      auth.account.id === detail.vote.data.account.id,
-    [auth, detail],
+    () => auth.account && auth.account.id === vote.account.id,
+    [auth, vote],
   );
 
-  const {buttonText, container, fl1, ml16, wrapper} = styles;
+  const status = React.useMemo(() => getVoteStatus(vote), [vote]);
 
-  return (
-    <View style={container}>
-      <View style={wrapper}>
-        <View style={fl1}>
-          {detail.voted ? (
+  const renderButtons = React.useMemo(() => {
+    const {buttonText, fl1, ml16} = styles;
+
+    switch (status) {
+      case 'DONE':
+        return (
+          <View style={fl1}>
             <Button onPress={onPressShowResult}>
               <Text style={buttonText}>투표 결과보기</Text>
             </Button>
-          ) : (
-            <Button disabled={detail.voted} onPress={onPressVote}>
-              <Text style={buttonText}>투표하기</Text>
-            </Button>
-          )}
-        </View>
-        {hasPermission && (
-          <View style={[fl1, ml16]}>
-            <Button onPress={onPressEndVote}>
-              <Text style={buttonText}>투표 종료하기</Text>
-            </Button>
           </View>
-        )}
-      </View>
-    </View>
-  );
+        );
+      case 'INPROGRESS':
+        return (
+          <>
+            <View style={fl1}>
+              {voted ? (
+                <Button onPress={onPressShowResult}>
+                  <Text style={buttonText}>투표 결과보기</Text>
+                </Button>
+              ) : (
+                <Button disabled={voted} onPress={onPressVote}>
+                  <Text style={buttonText}>투표하기</Text>
+                </Button>
+              )}
+            </View>
+            {hasPermission && (
+              <View style={[fl1, ml16]}>
+                <Button onPress={onPressEndVote}>
+                  <Text style={buttonText}>투표 종료하기</Text>
+                </Button>
+              </View>
+            )}
+          </>
+        );
+    }
+  }, [
+    hasPermission,
+    status,
+    voted,
+    onPressEndVote,
+    onPressShowResult,
+    onPressVote,
+  ]);
+
+  const {wrapper} = styles;
+
+  return <View style={wrapper}>{renderButtons}</View>;
 }
 
 const styles = StyleSheet.create({
   buttonText: {color: 'white', fontWeight: 'bold'},
-  container: {padding: 16, backgroundColor: 'white'},
   fl1: {flex: 1},
   ml16: {marginLeft: 16},
   wrapper: {flexDirection: 'row', justifyContent: 'space-between'},

@@ -34,6 +34,8 @@ type Vote = {
   title: string;
 };
 
+type VoteStatus = 'DONE' | 'INPROGRESS' | 'NONE';
+
 type Ballot = {
   account: Account;
   value: string;

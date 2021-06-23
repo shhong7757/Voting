@@ -7,6 +7,7 @@ import {
   VOTE_REQUEST,
 } from '../actions';
 import {getAuth, getDetail} from '../reducers/selectors';
+import {getVoteStatus} from '../lib/detailt';
 import {RouteProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {useDispatch, useSelector} from 'react-redux';
@@ -15,10 +16,9 @@ import BallotPaer from '../components/detail/DetailBallotPaper';
 import ErrorScreen from '../components/common/ErrorScreen';
 import Footer from '../components/detail/DetailFooter';
 import Header from '../components/detail/DetailHeader';
+import LoadingOverlay from '../components/common/LoadingOverlay';
 import LoadingScreen from '../components/common/LoadingScreen';
 import Row from '../components/common/Row';
-import LoadingOverlay from '../components/common/LoadingOverlay';
-import dayjs from 'dayjs';
 
 interface Props {
   route: RouteProp<MainStackParamList, 'Detail'>;
@@ -89,8 +89,7 @@ function DetailScreen({navigation, route}: Props) {
           <Header detail={detail} />
         </Row>
         <Row>
-          {!detail.vote.data.activate ||
-          dayjs(detail.vote.data.deadline).isBefore(dayjs()) ? (
+          {getVoteStatus(detail.vote.data) === 'DONE' ? (
             <Text>투표가 종료되었습니다.</Text>
           ) : detail.voted ? (
             <Text>
@@ -105,13 +104,16 @@ function DetailScreen({navigation, route}: Props) {
             />
           )}
         </Row>
-        <Footer
-          auth={auth}
-          detail={detail}
-          onPressEndVote={handlePressEndVote}
-          onPressShowResult={handlePressShowResult}
-          onPressVote={handlePressVote}
-        />
+        <Row>
+          <Footer
+            auth={auth}
+            vote={detail.vote.data}
+            voted={detail.voted}
+            onPressEndVote={handlePressEndVote}
+            onPressShowResult={handlePressShowResult}
+            onPressVote={handlePressVote}
+          />
+        </Row>
       </>
     );
   }
