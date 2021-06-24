@@ -7,6 +7,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch} from '../store';
 import {RootState} from '../reducers';
 import {
+  INIT_FORM,
   SET_FORM_DEADLINE,
   SET_FORM_START_DATE,
   SET_FORM_TITLE,
@@ -20,6 +21,10 @@ function CreateScreen() {
     useSelector((state: RootState) => state.form);
 
   const dispatch = useDispatch<AppDispatch>();
+
+  React.useEffect(() => {
+    dispatch({type: INIT_FORM});
+  }, [dispatch]);
 
   const handleChangeList = React.useCallback(
     (changedList: Array<string>) => {
