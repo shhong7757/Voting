@@ -1,7 +1,9 @@
 import React from 'react';
-import {Pressable, Text, SafeAreaView, StyleSheet} from 'react-native';
 import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
+import {Pressable, Text, StyleSheet} from 'react-native';
 import {primaryColor} from '../../../constant';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import Svg, {SvgType} from '../../common/Svg/Svg';
 
 function RootBottomTab({state, descriptors, navigation}: BottomTabBarProps) {
   const focusedOptions = descriptors[state.routes[state.index].key].options;
@@ -13,7 +15,7 @@ function RootBottomTab({state, descriptors, navigation}: BottomTabBarProps) {
   const {wrapper, tab, fontColor, fontPirmaryColor} = styles;
 
   return (
-    <SafeAreaView style={wrapper}>
+    <SafeAreaView style={wrapper} edges={['right', 'bottom', 'left']}>
       {state.routes.map((route, index) => {
         const {options} = descriptors[route.key];
         const label =
@@ -41,6 +43,22 @@ function RootBottomTab({state, descriptors, navigation}: BottomTabBarProps) {
           }
         };
 
+        let svg: SvgType | undefined;
+
+        switch (route.name) {
+          case 'CreateTmp':
+            svg = 'Add';
+            break;
+          case 'Main':
+            svg = 'List';
+            break;
+          case 'My':
+            svg = 'User';
+            break;
+          default:
+            break;
+        }
+
         return (
           <Pressable
             key={`root-bottom-tab-${route.key}`}
@@ -50,6 +68,7 @@ function RootBottomTab({state, descriptors, navigation}: BottomTabBarProps) {
             testID={options.tabBarTestID}
             onPress={onPress}
             style={tab}>
+            <Svg svg={svg} fill={isFocused ? primaryColor : 'black'} />
             <Text style={isFocused ? fontPirmaryColor : fontColor}>
               {label}
             </Text>
@@ -61,8 +80,12 @@ function RootBottomTab({state, descriptors, navigation}: BottomTabBarProps) {
 }
 
 const styles = StyleSheet.create({
-  wrapper: {flexDirection: 'row', backgroundColor: 'white'},
-  tab: {flex: 1, alignItems: 'center', height: 40},
+  wrapper: {
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    paddingVertical: 16,
+  },
+  tab: {flex: 1, alignItems: 'center'},
   fontColor: {color: '#222'},
   fontPirmaryColor: {color: primaryColor},
 });
