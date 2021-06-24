@@ -3,6 +3,7 @@ import {Auth} from '../../../reducers';
 import {getVoteStatus} from '../../../lib/detailt';
 import {View, Text, StyleSheet} from 'react-native';
 import Button from '../../common/Button';
+import dayjs from 'dayjs';
 
 interface Props {
   auth: Auth;
@@ -45,7 +46,9 @@ function DetailFooter({
           <>
             <View style={fl1}>
               {voted ? (
-                <Button onPress={onPressShowResult}>
+                <Button
+                  disabled={dayjs(vote.deadline).isAfter(dayjs())}
+                  onPress={onPressShowResult}>
                   <Text style={buttonText}>투표 결과보기</Text>
                 </Button>
               ) : (
@@ -67,6 +70,7 @@ function DetailFooter({
   }, [
     hasPermission,
     status,
+    vote,
     voted,
     onPressEndVote,
     onPressShowResult,

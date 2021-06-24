@@ -20,7 +20,7 @@ function Button({
   );
 
   return (
-    <Pressable {...pressableProps} style={style}>
+    <Pressable disabled={disabled} {...pressableProps} style={style}>
       {children}
     </Pressable>
   );
