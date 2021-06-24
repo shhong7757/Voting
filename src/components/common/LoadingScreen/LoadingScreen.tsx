@@ -6,7 +6,7 @@ function LoadingScreen() {
 
   return (
     <View style={container}>
-      <ActivityIndicator size="small" />
+      <ActivityIndicator size="small" color="gray" />
     </View>
   );
 }

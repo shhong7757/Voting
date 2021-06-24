@@ -5,7 +5,7 @@ function SplashScreen() {
   const {body} = styles;
   return (
     <View style={body}>
-      <ActivityIndicator size="large" />
+      <ActivityIndicator size="small" color="gray" />
     </View>
   );
 }
