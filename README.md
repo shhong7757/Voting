@@ -13,5 +13,5 @@
 
 ## 
 
-- 투표 데이터는 Firestore에 저장하고 있습니다. 앱 실행해 `GoogleService-Info.plist`, `google-services.json` 파일이 필요합니다.
+- 투표 데이터는 Firestore에 저장하고 있습니다. 앱 실행하기 위해서는 `GoogleService-Info.plist`, `google-services.json` 파일이 필요합니다.
 - 계정 데이터는 src/mock/account.json에 저장해 사용하도록 했습니다.
