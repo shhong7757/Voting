@@ -8,6 +8,7 @@ import {
   View,
   Alert,
 } from 'react-native';
+import {Platform} from 'react-native';
 
 interface Props {
   list: Array<string>;
@@ -50,35 +51,44 @@ function FormIntpuList({list, onChangeList}: Props) {
     [listItems],
   );
 
-  const {addButtonText, fl1, itemWrapper} = styles;
+  const {addButtonText, buttonWrapper, fl1, itemWrapper} = styles;
 
   return (
     <>
-      {listItems.map((item, idx) => (
-        <View key={`vote-list-item-${idx}`} style={itemWrapper}>
-          <View style={fl1}>
-            <TextInput
-              placeholder="항목 입력"
-              value={item}
-              onChangeText={text => handleChangeText(text, idx)}
-            />
+      {listItems.map((item, idx) => {
+        return (
+          <View key={`vote-list-item-${idx}`} style={itemWrapper}>
+            <View style={fl1}>
+              <TextInput
+                placeholder="항목 입력"
+                value={item}
+                onChangeText={text => handleChangeText(text, idx)}
+              />
+            </View>
+            <Pressable onPress={() => handlePressRemoveItem(idx)}>
+              <Text>삭제</Text>
+            </Pressable>
           </View>
-          <Pressable onPress={() => handlePressRemoveItem(idx)}>
-            <Text>삭제</Text>
-          </Pressable>
-        </View>
-      ))}
-      <Button onPress={handlePressAddItem}>
-        <Text style={addButtonText}>항목 추가</Text>
-      </Button>
+        );
+      })}
+      <View style={buttonWrapper}>
+        <Button onPress={handlePressAddItem}>
+          <Text style={addButtonText}>항목 추가</Text>
+        </Button>
+      </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
   addButtonText: {color: 'white'},
+  buttonWrapper: {marginTop: 8},
   fl1: {flex: 1},
-  itemWrapper: {flexDirection: 'row', alignItems: 'center'},
+  itemWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: Platform.OS === 'ios' ? 8 : undefined,
+  },
 });
 
 export default FormIntpuList;

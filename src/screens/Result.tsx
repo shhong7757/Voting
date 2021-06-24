@@ -52,23 +52,24 @@ function ResultScreen({route}: Props) {
   } else if (detail.vote.error) {
     return <ErrorScreen error={detail.vote.error} />;
   } else {
-    const {fl1, fldrr} = styles;
+    const {head, fl1, fldrr, fwb, f14, itemWrapper, itemWrapperLast} = styles;
 
     return (
       <Row>
         <FlatList
           data={list}
           ListHeaderComponent={() => (
-            <View style={fldrr}>
+            <View style={[head, fldrr]}>
               <View style={fl1}>
-                <Text>대상</Text>
+                <Text style={[fwb, f14]}>대상</Text>
               </View>
-              <Text>득표 수</Text>
+              <Text style={[fwb, f14]}>득표 수</Text>
             </View>
           )}
-          renderItem={({item}) => {
+          renderItem={({item, index}) => {
+            const last = list.length - 1 === index;
             return (
-              <View style={fldrr}>
+              <View style={[fldrr, last ? itemWrapperLast : itemWrapper]}>
                 <View style={fl1}>
                   <Text>{item.key}</Text>
                 </View>
@@ -86,6 +87,11 @@ function ResultScreen({route}: Props) {
 const styles = StyleSheet.create({
   fldrr: {flexDirection: 'row'},
   fl1: {flex: 1},
+  fwb: {fontWeight: 'bold'},
+  f14: {fontSize: 14},
+  head: {marginBottom: 8},
+  itemWrapper: {marginVertical: 4},
+  itemWrapperLast: {marginTop: 4},
 });
 
 export default ResultScreen;

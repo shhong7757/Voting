@@ -1,5 +1,5 @@
 import React from 'react';
-import {ScrollView, StyleSheet, TextInput, View} from 'react-native';
+import {Platform, ScrollView, StyleSheet, TextInput, View} from 'react-native';
 import FormInputList from '../components/form/FormInputList';
 import LoadingOverlay from '../components/common/LoadingOverlay';
 import dayjs from 'dayjs';
@@ -63,7 +63,7 @@ function CreateScreen() {
     [dispatch],
   );
 
-  const {rowWrapper} = styles;
+  const {textInput, rowWrapper, pt4} = styles;
 
   return (
     <>
@@ -72,13 +72,14 @@ function CreateScreen() {
         <View style={rowWrapper}>
           <WithValidateError errors={validationError} property="title">
             <TextInput
+              style={textInput}
               placeholder="투표 제목"
               value={title}
               onChangeText={handleChangeTitle}
             />
           </WithValidateError>
         </View>
-        <View style={rowWrapper}>
+        <View style={[pt4, rowWrapper]}>
           <WithValidateError errors={validationError} property="startDate">
             <FormDate
               date={startDate}
@@ -108,12 +109,14 @@ function CreateScreen() {
 }
 
 const styles = StyleSheet.create({
+  textInput: {paddingVertical: Platform.OS === 'ios' ? 8 : 0},
   rowWrapper: {
     paddingHorizontal: 16,
     paddingVertical: 8,
     backgroundColor: 'white',
     marginBottom: 8,
   },
+  pt4: {paddingTop: 4},
 });
 
 export default CreateScreen;

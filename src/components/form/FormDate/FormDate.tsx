@@ -22,11 +22,11 @@ function FormDate({date, title, maximumDate, minimumDate, onChageDate}: Props) {
     }
   }, [tmpDate, onChageDate]);
 
-  const {datePickerWrapper, fldr, fl1} = styles;
+  const {datePickerWrapper, fldr, fl1, mv8} = styles;
 
   return (
     <>
-      <View style={fldr}>
+      <View style={[fldr, mv8]}>
         <View style={fl1}>
           <Text>{title}</Text>
         </View>
@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
   datePickerWrapper: {alignItems: 'center'},
   fl1: {flex: 1},
   fldr: {flexDirection: 'row'},
+  mv8: {marginVertical: 8},
 });
 
 export default FormDate;
