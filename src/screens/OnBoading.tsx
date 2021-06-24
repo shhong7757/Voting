@@ -35,7 +35,14 @@ function OnBoadingScreen() {
     [dispatch],
   );
 
-  const {accountWrapper, accountListWrapper, container, buttonText} = styles;
+  const {
+    accountWrapper,
+    accountListWrapper,
+    container,
+    buttonText,
+    onBoadingText,
+    onBoadingTextWrapper,
+  } = styles;
 
   return (
     <WithBottomSheet
@@ -54,6 +61,13 @@ function OnBoadingScreen() {
       )}>
       {({show}) => (
         <SafeAreaView style={container}>
+          <View style={onBoadingTextWrapper}>
+            <Text style={onBoadingText}>
+              {
+                '이 앱은 클래스팅 과제를 위해 작성된 앱입니다. \n 아래 시작하기 버튼을 누르면 계정을 선택할 수 있습니다.'
+              }
+            </Text>
+          </View>
           <View>
             <Button onPress={show}>
               <Text style={buttonText}>시작하기</Text>
@@ -74,12 +88,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   container: {
+    flex: 1,
     margin: 16,
   },
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
   },
+  onBoadingTextWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  onBoadingText: {textAlign: 'center'},
 });
 
 export default OnBoadingScreen;

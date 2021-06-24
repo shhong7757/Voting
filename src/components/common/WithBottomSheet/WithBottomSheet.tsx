@@ -95,7 +95,7 @@ function WithBottomSheet({children, render}: Props) {
           </Animated.View>
         </Animated.View>
       </Modal>
-      <View>{children({show, hide})}</View>
+      <View style={f1}>{children({show, hide})}</View>
     </>
   );
 }
