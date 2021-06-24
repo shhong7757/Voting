@@ -120,7 +120,11 @@ const AuthFlow = () => {
         </>
       ) : (
         <>
-          <AuthFlowStack.Screen name="OnBoading" component={OnBoadingScreen} />
+          <AuthFlowStack.Screen
+            name="OnBoading"
+            component={OnBoadingScreen}
+            options={{headerShown: false}}
+          />
         </>
       )}
     </AuthFlowStack.Navigator>
