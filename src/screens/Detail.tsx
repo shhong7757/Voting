@@ -59,7 +59,7 @@ function DetailScreen({navigation, route}: Props) {
 
   const handlePressVote = React.useCallback(() => {
     if (detail.selectedIdx < 0) {
-      return;
+      return Alert.alert('항목을 선택해주세요');
     }
 
     Alert.alert(
