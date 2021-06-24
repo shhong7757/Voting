@@ -28,7 +28,7 @@ export function validateFormData(data: Form) {
   }
 
   const now = dayjs();
-  if (dayjs(data.deadline).isBefore(now)) {
+  if (dayjs(data.deadline).isBefore(data.startDate)) {
     properties.push('deadline');
   }
 
