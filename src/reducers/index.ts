@@ -71,7 +71,11 @@ const formInitState: Form = {
 function form(state = formInitState, action: FormActionTypes) {
   switch (action.type) {
     case INIT_FORM:
-      return formInitState;
+      return {
+        ...state,
+        deadline: dayjs().add(dayOffset, 'd').minute(0).toDate(),
+        startDate: dayjs().add(minOffset, 'm').toDate(),
+      };
     case SET_FORM_DEADLINE:
       return {...state, deadline: action.payload};
     case SET_FORM_START_DATE:

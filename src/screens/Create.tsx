@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  ScrollView,
-  Pressable,
-  StyleSheet,
-} from 'react-native';
-import DatePicker from 'react-native-date-picker';
+import {ScrollView, StyleSheet, TextInput, View} from 'react-native';
 import FormInputList from '../components/form/FormInputList';
 import LoadingOverlay from '../components/common/LoadingOverlay';
 import dayjs from 'dayjs';
@@ -15,12 +7,14 @@ import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch} from '../store';
 import {RootState} from '../reducers';
 import {
+  INIT_FORM,
   SET_FORM_DEADLINE,
   SET_FORM_START_DATE,
   SET_FORM_TITLE,
   SET_FORM_VOTE_LIST,
 } from '../actions';
 import WithValidateError from '../components/form/WithValidateError';
+import FormDate from '../components/form/FormDate';
 
 function CreateScreen() {
   const {deadline, list, title, loading, startDate, validationError} =
@@ -28,19 +22,9 @@ function CreateScreen() {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const [showDeadlineDatePicker, setShowDeadlineDatePicker] =
-    React.useState(false);
-  const [showStartDatePicker, setShowStartDatePicker] = React.useState(false);
-
-  const handlePressDeadlineEditDate = React.useCallback(
-    () => setShowDeadlineDatePicker(prevShowDatePicker => !prevShowDatePicker),
-    [],
-  );
-
-  const handlePressStartDateEditDate = React.useCallback(
-    () => setShowStartDatePicker(prevShowDatePicker => !prevShowDatePicker),
-    [],
-  );
+  React.useEffect(() => {
+    dispatch({type: INIT_FORM});
+  }, [dispatch]);
 
   const handleChangeList = React.useCallback(
     (changedList: Array<string>) => {
@@ -79,7 +63,7 @@ function CreateScreen() {
     [dispatch],
   );
 
-  const {datePickerWrapper, fldr, fl1, rowWrapper} = styles;
+  const {rowWrapper} = styles;
 
   return (
     <>
@@ -96,46 +80,21 @@ function CreateScreen() {
         </View>
         <View style={rowWrapper}>
           <WithValidateError errors={validationError} property="startDate">
-            <View style={fldr}>
-              <View style={fl1}>
-                <Text>시간시간 설정</Text>
-              </View>
-              <Pressable onPress={handlePressStartDateEditDate}>
-                <Text>{showStartDatePicker ? '완료' : '수정'}</Text>
-              </Pressable>
-            </View>
-            <Text>{dayjs(startDate).format('llll')}</Text>
-            <View style={datePickerWrapper}>
-              {showStartDatePicker && (
-                <DatePicker
-                  date={startDate}
-                  onDateChange={handleChangeStartDate}
-                  locale="ko"
-                  minimumDate={new Date()}
-                />
-              )}
-            </View>
+            <FormDate
+              date={startDate}
+              maximumDate={deadline}
+              minimumDate={new Date()}
+              title="시작시간 설정"
+              onChageDate={handleChangeStartDate}
+            />
           </WithValidateError>
           <WithValidateError errors={validationError} property="deadline">
-            <View style={fldr}>
-              <View style={fl1}>
-                <Text>마감시간 설정</Text>
-              </View>
-              <Pressable onPress={handlePressDeadlineEditDate}>
-                <Text>{showDeadlineDatePicker ? '완료' : '수정'}</Text>
-              </Pressable>
-            </View>
-            <Text>{dayjs(deadline).format('llll')}</Text>
-            <View style={datePickerWrapper}>
-              {showDeadlineDatePicker && (
-                <DatePicker
-                  date={deadline}
-                  onDateChange={handleChangeDeadline}
-                  locale="ko"
-                  minimumDate={dayjs(startDate).toDate()}
-                />
-              )}
-            </View>
+            <FormDate
+              date={deadline}
+              minimumDate={dayjs(startDate).toDate()}
+              title="마감시간 설정"
+              onChageDate={handleChangeDeadline}
+            />
           </WithValidateError>
         </View>
         <View style={rowWrapper}>
@@ -155,9 +114,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginBottom: 8,
   },
-  datePickerWrapper: {alignItems: 'center'},
-  fl1: {flex: 1},
-  fldr: {flexDirection: 'row'},
 });
 
 export default CreateScreen;
