@@ -57,12 +57,13 @@ export type Form = {
 };
 
 const dayOffset = 3;
+const minOffset = 30;
 const limitOfList = 3;
 const formInitState: Form = {
   deadline: dayjs().add(dayOffset, 'd').minute(0).toDate(),
   list: new Array<string>(limitOfList).fill(''),
   loading: false,
-  startDate: dayjs().toDate(),
+  startDate: dayjs().add(minOffset, 'm').toDate(),
   title: '',
   validationError: [],
 };
