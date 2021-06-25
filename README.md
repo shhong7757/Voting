@@ -1,6 +1,10 @@
 ## 실행방법
 
-앱을 실행하기 위해서는 `GoogleService-Info.plist`, `google-services.json` 파일이 필요합니다.
+**앱을 실행하기 위해서는 `GoogleService-Info.plist`, `google-services.json` 파일이 필요합니다.**
+```
+google-services.json 파일은 Android를 위해 필요한 파일이며 android 프로젝트 앱 수준에 위치해야합니다. 합니다. (android/app/google-services.json)
+GoogleService-info.plist 파일은 iOS를 위해 필요한 파일이며 ios 폴더 아래 위치해야 합니다. (ios/GoogleService-info.plist)
+```
 
 1. `yarn`
 2. `cd ios && pod install`
