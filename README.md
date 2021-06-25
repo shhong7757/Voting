@@ -1,3 +1,12 @@
+## 실행방법
+
+앱을 실행하기 위해서는 `GoogleService-Info.plist`, `google-services.json` 파일이 필요합니다.
+
+1. `yarn`
+2. `cd ios && pod install`
+3. `npx react-native start`
+4. `npx react-native run-ios` or `npx react-native run-android`
+
 ## 요구사항
 
 - [x] 사용자는 투표를 생성할 수 있어야 한다 투표 생성자는 제목을 입력할 수 있어야 한다
@@ -10,8 +19,3 @@
 - [x] 사용자는 투표 리스트에서 진행중인 투표에 투표 할 수 있다
 - [x] 사용자는 투표 결과를 텍스트로 확인할 수 있어야 한다
 - [x] 투표 생성자는 투표 기간을 설정할 수 있다(시작, 종료) 사용자는 종료시간이 지난 투표는 결과보기만 할 수 있다
-
-## 
-
-- 투표 데이터는 Firestore에 저장하고 있습니다. 앱 실행하기 위해서는 `GoogleService-Info.plist`, `google-services.json` 파일이 필요합니다.
-- 계정 데이터는 src/mock/account.json에 저장해 사용하도록 했습니다.
